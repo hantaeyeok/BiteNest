@@ -86,7 +86,36 @@ out/
 .classpath
 .settings/
 
-# 6. 기타 설정
+# 6. Oracle DB
+
+# Oracle 관련 DB 설정 파일 
+*.sql
+*.dmp
+*.log
+*.trc
+
+# 데이터베이스 연결 설정 파일
+oracle_wallet/
+*.ora
+tnsnames.ora
+sqlnet.ora
+listener.ora
+orapwd*
+
+# 데이터베이스 백업 파일
+*.bak
+*.dmp
+*.dat
+
+# PL/SQL Developer 임시 파일
+*.plsql
+
+# Oracle SQL Developer 설정 파일
+sqldeveloper/
+*.jtds
+
+
+# 7. 기타 설정
 
 # Package files
 *.zip
