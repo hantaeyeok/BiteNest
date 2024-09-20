@@ -15,7 +15,7 @@
 # 환경 설정 파일 (민감한 정보)
 .env
 application-*.properties
-application-*.yml
+application.yml
 
 # 빌드 결과물
 build/
