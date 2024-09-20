@@ -1,24 +1,111 @@
-# Compiled class file
+# 1. Java 및 Spring Boot 관련 설정
+
+# 컴파일된 클래스 파일
 *.class
 
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
+# JAR, WAR, EAR 파일
 *.jar
 *.war
-*.nar
 *.ear
+
+# Spring Boot 
+*.tmp
+*.temp
+
+# 환경 설정 파일 (민감한 정보)
+.env
+application-*.properties
+application-*.yml
+
+# 빌드 결과물
+build/
+
+# 로그 파일
+*.log
+
+# 2. Gradle 관련 설정
+
+# Gradle Wrapper 관련 파일
+.gradle/
+!gradle/wrapper/gradle-wrapper.properties
+!gradle/wrapper/gradle-wrapper.jar
+
+# 빌드 결과물
+build/
+
+# 3. Node.js 및 React 관련 설정
+
+# Yarn Berry Zero-Install 관련 설정
+.pnp.*
+.yarn/*
+!.yarn/cache
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+# npm/Yarn 로그 파일
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 빌드된 React 앱 (생성된 정적 파일)
+build/
+
+# Webpack 결과물
+dist/
+
+# ESLint 캐시 파일
+.eslintcache
+
+# Prettier 관련 파일
+.prettierignore
+
+# 테스트 및 커버리지 결과물
+coverage/
+test-results/
+
+# 4. 운영체제 관련 설정
+
+# macOS 시스템 파일
+.DS_Store
+
+# Windows 시스템 파일
+Thumbs.db
+Desktop.ini
+
+# 5. IDE 관련 설정
+
+# IntelliJ 관련 설정 파일
+.idea/
+*.iws
+out/
+
+# Eclipse 관련 설정 파일
+.project
+.classpath
+.settings/
+
+# 6. 기타 설정
+
+# Package files
 *.zip
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+# Gradle-specific
+.gradle/
+!gradle-wrapper.properties
+!gradle-wrapper.jar
+
+# Java heap dump
+*.hprof
+
+# Eclipse-specific
+.metadata
+.recommenders/
+.externalToolBuilders/
+
+# Yarn cache
+.yarn/*
+!.yarn/cache
