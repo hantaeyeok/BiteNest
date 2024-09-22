@@ -1,5 +1,5 @@
 function HomePage() {
-  return <div>homePage2</div>
+  return <div>homePage 커밋성공!</div>
 }
 
 export default HomePage
