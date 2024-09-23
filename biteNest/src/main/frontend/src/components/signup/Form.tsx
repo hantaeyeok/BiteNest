@@ -56,8 +56,6 @@ function Form({ onSubmit }: { onSubmit: (formValues: FormValues) => void }) {
     )
   })
 
-  console.log('termsAgreement', termsAgreements)
-
   const errors = useMemo(() => validate(formValues), [formValues])
 
   const 모든약관이동의되었는가 = Object.values(termsAgreements).every(
@@ -117,7 +115,7 @@ function Form({ onSubmit }: { onSubmit: (formValues: FormValues) => void }) {
         helpMessage={Boolean(dirty.password) ? errors.password : ''}
         onBlur={handleBlur}
       />
-      <div className="my-6"></div>
+
       <TextField
         label="패스워드확인"
         name="rePassword"

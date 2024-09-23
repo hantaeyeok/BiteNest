@@ -19,7 +19,7 @@ module.exports = {
           200: '#DEB887',
           300: '#8B4513',
         },
-        Salmon: {
+        salmon: {
           100: '#FFA07A',
           200: '#FFDAB9',
         },
