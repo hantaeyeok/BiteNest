@@ -83,13 +83,11 @@ function Form({ onSubmit }: { onSubmit: (formValues: FormValues) => void }) {
   const handleAllAgreement = useCallback(
     (_: MouseEvent<HTMLElement>, checked: boolean) => {
       setTermsAgreements((prevTerms) => {
-        return Object.keys(prevTerms).reduce(
-          (prev, key) => ({
-            ...prev,
-            [key]: checked,
-          }),
-          {},
-        )
+        const newTerms = { ...prevTerms } // 새로운 객체 생성
+        Object.keys(newTerms).forEach((key) => {
+          newTerms[key] = checked
+        })
+        return newTerms
       })
     },
     [],
@@ -169,7 +167,7 @@ function Form({ onSubmit }: { onSubmit: (formValues: FormValues) => void }) {
             onChange={(_, checked) => {
               setTermsAgreements((prevTerms) => ({
                 ...prevTerms,
-                [id]: checked,
+                [id]: checked, // 새로운 객체를 반환
               }))
             }}
           >
@@ -181,7 +179,7 @@ function Form({ onSubmit }: { onSubmit: (formValues: FormValues) => void }) {
       <div className="my-6"></div>
       <Button
         label="회원가입"
-        disabled={제출가능한상태인가 === false}
+        disabled={!제출가능한상태인가 || !termsAgreements['01']}
         color="bg-brown-100"
         size="full"
         onClick={() => {

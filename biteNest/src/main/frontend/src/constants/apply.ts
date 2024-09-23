@@ -8,4 +8,4 @@ export const 약관목록 = [
   },
 
   { id: '02', title: '이벤트 및 혜택정보 sns 메세지 받아보기' },
-]
+] as Term[]
