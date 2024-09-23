@@ -1,10 +1,11 @@
-import { ChangeEvent, useCallback, useMemo, useState } from 'react'
+import { ChangeEvent, useCallback, useMemo, useState, MouseEvent } from 'react'
 import Button from '@components/shared/Button'
 import TextField from '@components/shared/TextField'
 
 import { FormValues } from '@models/signup'
 import validator from 'validator'
-import Spacing from '@/shared/Spacing'
+import Agreement from '@shared/Agreement'
+import { 약관목록 } from '@constants/apply'
 
 function validate(formValues: FormValues) {
   let errors: Partial<FormValues> = {}
@@ -45,7 +46,23 @@ function Form({ onSubmit }: { onSubmit: (formValues: FormValues) => void }) {
 
   const [dirty, setDirty] = useState<Partial<FormValues>>({})
 
+  const [termsAgreements, setTermsAgreements] = useState(() => {
+    return 약관목록.reduce<Record<string, boolean>>(
+      (prev, term) => ({
+        ...prev,
+        [term.id]: false,
+      }),
+      {},
+    )
+  })
+
+  console.log('termsAgreement', termsAgreements)
+
   const errors = useMemo(() => validate(formValues), [formValues])
+
+  const 모든약관이동의되었는가 = Object.values(termsAgreements).every(
+    (동의여부) => 동의여부,
+  )
 
   const 제출가능한상태인가 = Object.keys(errors).length === 0
 
@@ -63,6 +80,20 @@ function Form({ onSubmit }: { onSubmit: (formValues: FormValues) => void }) {
     }))
   }, [])
 
+  const handleAllAgreement = useCallback(
+    (_: MouseEvent<HTMLElement>, checked: boolean) => {
+      setTermsAgreements((prevTerms) => {
+        return Object.keys(prevTerms).reduce(
+          (prev, key) => ({
+            ...prev,
+            [key]: checked,
+          }),
+          {},
+        )
+      })
+    },
+    [],
+  )
   return (
     <div className="sm:container sm:mx-auto py-6 px-6 sm:px-36">
       <p className="text-2xl my-6">회원가입</p>
@@ -76,7 +107,8 @@ function Form({ onSubmit }: { onSubmit: (formValues: FormValues) => void }) {
         helpMessage={Boolean(dirty.email) ? errors.email : ''}
         onBlur={handleBlur}
       />
-      <Spacing size={6} />
+      <div className="my-6"></div>
+
       <TextField
         label="패스워드"
         name="password"
@@ -87,7 +119,7 @@ function Form({ onSubmit }: { onSubmit: (formValues: FormValues) => void }) {
         helpMessage={Boolean(dirty.password) ? errors.password : ''}
         onBlur={handleBlur}
       />
-      <Spacing size={6} />
+      <div className="my-6"></div>
       <TextField
         label="패스워드확인"
         name="rePassword"
@@ -98,7 +130,7 @@ function Form({ onSubmit }: { onSubmit: (formValues: FormValues) => void }) {
         helpMessage={Boolean(dirty.rePassword) ? errors.rePassword : ''}
         onBlur={handleBlur}
       />
-      <Spacing size={6} />
+      <div className="my-6"></div>
       <TextField
         label="이름"
         name="name"
@@ -109,7 +141,7 @@ function Form({ onSubmit }: { onSubmit: (formValues: FormValues) => void }) {
         helpMessage={Boolean(dirty.name) ? errors.name : ''}
         onBlur={handleBlur}
       />
-      <Spacing size={6} />
+      <div className="my-6"></div>
       <TextField
         label="닉네임"
         name="nickName"
@@ -120,7 +152,33 @@ function Form({ onSubmit }: { onSubmit: (formValues: FormValues) => void }) {
         helpMessage={Boolean(dirty.nickName) ? errors.nickName : ''}
         onBlur={handleBlur}
       />
-      <Spacing size={6} />
+      <div className="my-6"></div>
+
+      <Agreement>
+        <Agreement.Title
+          checked={모든약관이동의되었는가}
+          onChange={handleAllAgreement}
+        >
+          약관에 모두 동의
+        </Agreement.Title>
+        {약관목록.map(({ id, title, link }) => (
+          <Agreement.Description
+            key={id}
+            link={link}
+            checked={termsAgreements[id]}
+            onChange={(_, checked) => {
+              setTermsAgreements((prevTerms) => ({
+                ...prevTerms,
+                [id]: checked,
+              }))
+            }}
+          >
+            {title}
+          </Agreement.Description>
+        ))}
+      </Agreement>
+
+      <div className="my-6"></div>
       <Button
         label="회원가입"
         disabled={제출가능한상태인가 === false}
