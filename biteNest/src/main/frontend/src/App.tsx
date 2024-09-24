@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import HomePage from '@pages/Home'
 import SigninPage from '@pages/Signin'
-import SignupPage from './pages/Signup'
+import SignupPage from '@pages/Signup'
+import RecipeCreatePage from '@pages/RecipeCreate'
 
 import Navbar from '@shared/Navbar'
 
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" Component={HomePage} />
         <Route path="/signin" Component={SigninPage} />
         <Route path="/signup" Component={SignupPage} />
+        <Route path="/recipes/create" Component={RecipeCreatePage} />
       </Routes>
     </BrowserRouter>
   )
