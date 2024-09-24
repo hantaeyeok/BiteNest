@@ -3,17 +3,17 @@ import ReactDOM from 'react-dom/client'
 import './index.css'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
-import { worker } from './mocks/browser'
-
-// 개발 환경에서만 MSW 실행
-if (process.env.NODE_ENV === 'development') {
-  worker.start()
-}
+import AuthGuard from './components/auth/AuthGuard'
+import { RecoilRoot } from 'recoil'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <React.StrictMode>
-    <App />
+    <RecoilRoot>
+      <AuthGuard>
+        <App />
+      </AuthGuard>
+    </RecoilRoot>
   </React.StrictMode>,
 )
 

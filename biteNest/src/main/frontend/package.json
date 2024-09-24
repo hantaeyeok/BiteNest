@@ -12,7 +12,6 @@
     "@types/react-dom": "^18.3.0",
     "axios": "^1.7.7",
     "http-proxy-middleware": "^3.0.2",
-    "msw": "1.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2",
@@ -62,7 +61,7 @@
     "prettier": "^3.3.3",
     "tailwindcss": "^3.4.12"
   },
-  "proxy": "http://localhost:80",
+  "proxy": "https://localhost:80",
   "msw": {
     "workerDirectory": [
       "public/"
