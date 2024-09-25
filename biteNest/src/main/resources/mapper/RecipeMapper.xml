@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bn.biteNest.recipe.model.dao.RecipeMapper">
+
+    <!-- 레시피 목록 조회 -->
+    <select id="getAllRecipes" resultType="com.bn.biteNest.recipe.vo.RecipeVO">
+        SELECT
+            RECIPE_CD,
+            USER_NO,
+            RECIPE_NM,
+            RECIPE_DESCRIPTION,
+            ESTIMATED_TIME,
+            COOKING_SERVINGS,
+            RECIPE_MAIN_IMAGE,
+            CATEGORY2_CD,
+            CREATED_DT,
+            UPDATED_DT
+        FROM
+            RECIPE_TB
+    </select>
+
+    <!-- 레시피 ID로 조회 -->
+    <select id="getRecipeById" parameterType="int" resultType="com.bn.biteNest.recipe.vo.RecipeVO">
+        SELECT
+            RECIPE_CD,
+            USER_NO,
+            RECIPE_NM,
+            RECIPE_DESCRIPTION,
+            ESTIMATED_TIME,
+            COOKING_SERVINGS,
+            RECIPE_MAIN_IMAGE,
+            CATEGORY2_CD,
+            CREATED_DT,
+            UPDATED_DT
+        FROM
+            RECIPE_TB
+        WHERE
+            RECIPE_CD = #{recipeCD}
+    </select>
+
+    <!-- 레시피 추가 -->
+    <insert id="insertRecipe" parameterType="com.bn.biteNest.recipe.vo.RecipeVO">
+        INSERT INTO
+            RECIPE_TB
+            (RECIPE_CD, USER_NO, RECIPE_NM, RECIPE_DESCRIPTION, ESTIMATED_TIME,
+            COOKING_SERVINGS, RECIPE_MAIN_IMAGE, CATEGORY2_CD, CREATED_DT)
+        VALUES
+            (#{recipeCD}, #{userNO}, #{recipeNM}, #{recipeDescription}, #{estimatedTime},
+            #{cookingServings}, #{recipeMainImage}, #{category2CD}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <!-- 레시피 수정 -->
+    <update id="updateRecipe" parameterType="com.bn.biteNest.recipe.vo.RecipeVO">
+        UPDATE
+            RECIPE_TB
+        SET
+            RECIPE_NM = #{recipeNM},
+            RECIPE_DESCRIPTION = #{recipeDescription},
+            ESTIMATED_TIME = #{estimatedTime},
+            COOKING_SERVINGS = #{cookingServings},
+            RECIPE_MAIN_IMAGE = #{recipeMainImage},
+            CATEGORY2_CD = #{category2CD},
+            UPDATED_DT = CURRENT_TIMESTAMP
+        WHERE
+            RECIPE_CD = #{recipeCD}
+    </update>
+
+    <!-- 레시피 삭제 -->
+    <delete id="deleteRecipe" parameterType="int">
+        DELETE FROM
+            RECIPE_TB
+        WHERE
+            RECIPE_CD = #{recipeCD}
+    </delete>
+
+</mapper>
