@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Button from '../shared/Button'
 
 interface Step {
+  stepOrder: number
   description: string
   image: File | null
 }
@@ -41,7 +42,7 @@ function StepsSection({
               />
               <Button
                 label="X"
-                color="bg-salmon-200 text-white"
+                color="bg-cream text-brown-200"
                 size="small"
                 onClick={() => handleRemoveStep(index)}
                 disabled={steps.length === 1}
@@ -68,7 +69,7 @@ function StepsSection({
       </div>
       <Button
         label="추가"
-        color="bg-salmon-200 text-salmon-100"
+        color="bg-cream text-white"
         size="full"
         onClick={handleAddStep}
       />

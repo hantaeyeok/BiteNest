@@ -39,7 +39,7 @@ function SauceSection({
       </div>
       <Button
         label="추가"
-        color="bg-salmon-200 text-salmon-100"
+        color="bg-cream text-white"
         size="full"
         onClick={handleAddSauce}
       />

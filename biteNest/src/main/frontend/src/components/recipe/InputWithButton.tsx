@@ -37,7 +37,7 @@ function InputWithButton({
       />
       <Button
         label="X"
-        color="bg-salmon-200 text-white"
+        color="bg-cream text-brown-200"
         size="small"
         onClick={onRemove}
         disabled={disableRemove}
