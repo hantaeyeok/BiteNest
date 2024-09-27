@@ -25,6 +25,7 @@ module.exports = {
         },
         caramel: '#CD853F',
         creamWhite: '#FFF9E5',
+        darkCream: '#e0cbb6',
         cream: '#F7ECE1',
         textBrown: {
           100: '#3F2514',

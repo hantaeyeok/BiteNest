@@ -51,7 +51,7 @@ function StepsSection({
             <input
               type="file"
               accept="image/*"
-              className="mt-1 border border-brown-100 rounded-md focus:outline-none focus:border-brown-300 focus:ring-brown-300"
+              className="mt-1 rounded-md focus:outline-none focus:border-brown-300 focus:ring-brown-300"
               onChange={(e) => {
                 const file = e.target.files?.[0] || null
                 handleImageChange(index, file)

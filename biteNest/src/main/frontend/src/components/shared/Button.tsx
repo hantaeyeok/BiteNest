@@ -16,7 +16,7 @@ function Button({
   disabled = false,
 }: ButtonProps) {
   const baseStyle =
-    'font-semibold rounded-lg focus:outline-none focus:ring transition duration-300 ease-in-out hover:brightness-110'
+    'font-semibold rounded-lg focus:outline-none focus:ring transition duration-300 ease-in-out hover:bg-opacity-70'
 
   // 크기 설정
   const sizeStyle =

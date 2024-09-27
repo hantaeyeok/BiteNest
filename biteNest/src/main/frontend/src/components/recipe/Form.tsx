@@ -7,20 +7,47 @@ import IngredientsSection from './IngredientSectionForm'
 import SubIngredientsSection from './SubIngredientSectionForm'
 import SauceSection from './SauceSectionForm'
 import StepsSection from './StepsSectionForm'
+import TipSection from './section/TipSectionForm'
 
 function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
   const [formValues, setFormValues] = useState<FormValues>({
     title: '',
     description: '',
+    titleImage: null,
     time: 0,
     category: '',
     ingredients: [{ name: '', quantity: '' }],
     subIngredients: null,
     sauce: null,
     steps: [{ stepOrder: 0, description: '', image: null }],
+    tips: [], // 빈 배열로 팁 초기화
   })
 
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
+  const [titleImagePreview, setTitleImagePreview] = useState<string | null>(
+    null,
+  ) // 타이틀 이미지 미리보기 상태
+
+  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] // 파일이 존재하는지 확인
+    if (file) {
+      const imageUrl = URL.createObjectURL(file) // 업로드한 파일로 미리보기 URL 생성
+      setFormValues((prev) => ({
+        ...prev,
+        titleImage: file, // 이미지 파일 저장
+      }))
+      setTitleImagePreview(imageUrl) // 미리보기 URL 설정
+    }
+  }
+
+  // 이미지 삭제 함수
+  const handleRemoveImage = () => {
+    setFormValues((prev) => ({
+      ...prev,
+      titleImage: null, // 이미지 파일 삭제
+    }))
+    setTitleImagePreview(null) // 미리보기 이미지 삭제
+  }
 
   const handleAddIngredient = () => {
     setFormValues((prev) => ({
@@ -70,7 +97,6 @@ function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
     setFormValues((prev) => ({ ...prev, subIngredients: newSubIngredients }))
   }
 
-  // 소스 관련 함수들
   const handleAddSauce = () => {
     setFormValues((prev) => ({
       ...prev,
@@ -139,6 +165,28 @@ function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
     }
   }
 
+  const handleAddTip = () => {
+    setFormValues((prev) => ({
+      ...prev,
+      tips: [...(prev.tips || []), ''],
+    }))
+  }
+
+  const handleTipChange = (index: number, value: string) => {
+    setFormValues((prev) => {
+      const newTips = [...(prev.tips || [])]
+      newTips[index] = value
+      return { ...prev, tips: newTips }
+    })
+  }
+
+  const handleRemoveTip = (index: number) => {
+    setFormValues((prev) => {
+      const newTips = (prev.tips || []).filter((_, i) => i !== index)
+      return { ...prev, tips: newTips }
+    })
+  }
+
   const timeOptions = [
     { label: '15분 미만', value: 10 },
     { label: '15분컷', value: 15 },
@@ -157,23 +205,26 @@ function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
   const handleSubmit = () => {
     const formData = new FormData()
 
-    // 문자열이나 숫자는 그대로 추가
     formData.append('title', formValues.title)
     formData.append('description', formValues.description)
-    formData.append('time', String(formValues.time)) // 숫자는 문자열로 변환
+    formData.append('time', String(formValues.time))
     formData.append('category', formValues.category)
 
-    // 배열은 JSON 문자열로 변환하여 추가
+    if (formValues.titleImage) {
+      formData.append('titleImage', formValues.titleImage) // 이미지 파일 추가
+    }
+
+    // ingredients 배열 추가
     formValues.ingredients.forEach((ingredient, index) => {
       formData.append(`ingredients[${index}].ingredientName`, ingredient.name)
       formData.append(
         `ingredients[${index}].ingredientAmount`,
         ingredient.quantity,
       )
-      formData.append(`ingredients[${index}].ingredientType`, '주재료') // 기본적으로 주재료로 설정
+      formData.append(`ingredients[${index}].ingredientType`, '주재료')
     })
 
-    // subIngredients가 있을 경우에만 추가
+    // subIngredients가 있을 경우 추가
     if (formValues.subIngredients) {
       formValues.subIngredients.forEach((subIngredient, index) => {
         formData.append(
@@ -191,21 +242,22 @@ function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
       })
     }
 
-    // sauce가 있을 경우에만 추가
+    // sauce가 있을 경우 추가
     if (formValues.sauce) {
       formValues.sauce.forEach((sauceItem, index) => {
+        const baseIndex =
+          index +
+          formValues.ingredients.length +
+          (formValues.subIngredients?.length || 0)
         formData.append(
-          `ingredients[${index + formValues.ingredients.length + (formValues.subIngredients?.length || 0)}].ingredientName`,
+          `ingredients[${baseIndex}].ingredientName`,
           sauceItem.name || '',
         )
         formData.append(
-          `ingredients[${index + formValues.ingredients.length + (formValues.subIngredients?.length || 0)}].ingredientAmount`,
+          `ingredients[${baseIndex}].ingredientAmount`,
           sauceItem.quantity || '',
         )
-        formData.append(
-          `ingredients[${index + formValues.ingredients.length + (formValues.subIngredients?.length || 0)}].ingredientType`,
-          '양념',
-        )
+        formData.append(`ingredients[${baseIndex}].ingredientType`, '양념')
       })
     }
 
@@ -213,12 +265,14 @@ function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
     formValues.steps.forEach((step, index) => {
       formData.append(`steps[${index}].description`, step.description)
       if (step.image) {
-        formData.append(`steps[${index}].image`, step.image) // File 객체는 그대로 추가
+        formData.append(`steps[${index}].image`, step.image)
       }
     })
 
-    if (formValues.tip) {
-      formData.append('tip', formValues.tip)
+    if (formValues.tips && formValues.tips.length > 0) {
+      formValues.tips.forEach((tip, index) => {
+        formData.append(`tips[${index}]`, tip)
+      })
     }
 
     onSubmit(formData)
@@ -240,7 +294,39 @@ function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
         />
       </div>
 
-      <div className="bg-creamWhite h-48">이미지 미리보기</div>
+      {/* 이미지 미리보기 */}
+      <div className="bg-creamWhite h-80 flex items-center justify-center relative ">
+        {titleImagePreview ? (
+          <div className="relative h-full ">
+            <img
+              src={titleImagePreview}
+              alt="미리보기"
+              className="h-full w-full object-contain cursor-pointer" // object-fit: contain 적용
+              onClick={() => document.getElementById('fileInput')?.click()}
+            />
+            {/* 이미지 삭제 버튼 */}
+            <button
+              className="absolute top-2 right-2 bg-brown-300 text-white px-2 py-1 rounded z-10"
+              onClick={handleRemoveImage}
+            >
+              삭제
+            </button>
+          </div>
+        ) : (
+          <button onClick={() => document.getElementById('fileInput')?.click()}>
+            이미지 미리보기
+          </button>
+        )}
+      </div>
+
+      {/* 파일 업로드 input */}
+      <input
+        id="fileInput"
+        type="file"
+        className="hidden"
+        accept="image/*"
+        onChange={handleImageUpload} // 파일 선택 시 handleImageUpload 함수 실행
+      />
 
       <input
         type="text"
@@ -281,19 +367,6 @@ function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
         </div>
       </div>
 
-      <div className="my-6"></div>
-      <div>
-        <label className="block text-lg font-bold text-brown-300">
-          카테고리*
-        </label>
-        <RecipeCategorySelect
-          value={formValues.category} // formValues.category 값을 전달
-          onChange={(value) =>
-            setFormValues({ ...formValues, category: value })
-          }
-        />
-      </div>
-
       <IngredientsSection
         ingredients={formValues.ingredients}
         handleAddIngredient={handleAddIngredient}
@@ -322,6 +395,13 @@ function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
         handleRemoveStep={handleRemoveStep}
         handleImageChange={handleImageChange}
         imagePreviews={imagePreviews}
+      />
+
+      <TipSection
+        tips={formValues.tips}
+        handleAddTip={handleAddTip}
+        handleTipChange={handleTipChange}
+        handleRemoveTip={handleRemoveTip}
       />
     </div>
   )
