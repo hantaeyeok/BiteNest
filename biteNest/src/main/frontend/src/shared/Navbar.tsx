@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import useUser from '@hooks/auth/useUser'
 import Button from '@/components/shared/Button'
 import instance from '@/util/axios'
@@ -7,46 +7,52 @@ import instance from '@/util/axios'
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
   const location = useLocation()
-  const showSignButton =
-    ['/signup', '/signin'].includes(location.pathname) === false
+  const showSignButton = !['/signup', '/signin'].includes(location.pathname)
 
   const { user, setUser } = useUser()
+  const navigate = useNavigate()
   console.log('user', user)
+
+  const handleProtectedLink = useCallback(
+    (path: string) => {
+      console.log('link-user', user)
+
+      if (!user) {
+        alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.')
+        navigate('/signin')
+      } else {
+        navigate(path)
+      }
+    },
+    [user, navigate],
+  ) // useCallback 디펜던시로 user 추가
 
   const handleLogout = async () => {
     try {
-      // 백엔드에 로그아웃 요청 보내기
       const token = localStorage.getItem('token')
       const response = await instance.post(
         'https://3ccfb3c6-7a46-4902-b117-a23e940861d2.mock.pstmn.io/api/logout',
         {},
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Bearer token 추가
+            Authorization: `Bearer ${token}`,
           },
         },
-      ) // API TODO
-
+      )
       console.log('로그아웃 성공:', response.data)
 
-      // 사용자 상태를 null로 설정하여 로그아웃 처리
       setUser(null)
-
-      // 로컬 스토리지 초기화
       localStorage.removeItem('token')
       localStorage.removeItem('email')
       localStorage.removeItem('nickName')
-
-      // 사용자 상태를 null로 설정
-      // 여기서 useUser 훅을 통해 상태를 업데이트해야 할 수 있습니다.
-      // 예를 들어, setUser(null)과 같은 함수가 있을 경우 이를 호출합니다.
+      localStorage.removeItem('id')
     } catch (error) {
       console.error('로그아웃 실패:', error)
     }
   }
 
   const renderButton = useCallback(() => {
-    if (user != null) {
+    if (user) {
       return (
         <button
           onClick={handleLogout}
@@ -56,6 +62,7 @@ const Navbar: React.FC = () => {
         </button>
       )
     }
+
     if (showSignButton) {
       return (
         <a
@@ -66,6 +73,7 @@ const Navbar: React.FC = () => {
         </a>
       )
     }
+
     return null
   }, [user, showSignButton])
 
@@ -78,21 +86,19 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
-            {/* 로고 */}
             <div className="flex-shrink-0 flex items-center font-logo">
               <a href="/" className="text-2xl font-bold text-brown-300">
                 BiteNest
               </a>
             </div>
 
-            {/* 링크들 (데스크탑용) */}
             <div className="hidden md:ml-6 md:flex md:space-x-8">
-              <a
-                href="/fridge"
-                className="flex items-center justify-center text-brown-300 hover:text-brown-100 px-3 py-2 rounded-md text-lg font-medium"
+              <button
+                onClick={() => handleProtectedLink(`/mypage/${user?.id}`)}
+                className="text-brown-300 hover:text-brown-100 px-3 py-2 rounded-md text-lg font-medium"
               >
-                냉장고관리
-              </a>
+                냉장고 관리
+              </button>
               <a
                 href="/recipes"
                 className="flex items-center justify-center text-brown-300 hover:text-brown-100 px-3 py-2 rounded-md text-lg font-medium"
@@ -101,8 +107,6 @@ const Navbar: React.FC = () => {
               </a>
             </div>
           </div>
-
-          {/* 우측 로그인/회원가입 (데스크탑용) */}
 
           <div className="hidden md:flex md:items-center md:space-x-4">
             {renderButton()}
@@ -114,14 +118,12 @@ const Navbar: React.FC = () => {
             </a>
           </div>
 
-          {/* 모바일 메뉴 버튼 */}
           <div className="md:hidden flex items-center">
             <button
               type="button"
               className="text-brown-300 hover:text-brown-100 focus:outline-none"
               onClick={toggleMenu}
             >
-              {/* 햄버거 아이콘 */}
               <svg
                 className="h-8 w-8"
                 xmlns="http://www.w3.org/2000/svg"
@@ -140,11 +142,10 @@ const Navbar: React.FC = () => {
           </div>
         </div>
 
-        {/* 모바일 메뉴 (toggle 적용) */}
         {isOpen && (
           <div className="md:hidden">
             <a
-              href="/fridge"
+              href={`/fridge/${user?.id ?? ''}`} // user?.id로 안전하게 접근
               className="block text-brown-300 hover:text-brown-100 px-3 py-2 rounded-md text-lg font-medium"
             >
               냉장고관리
