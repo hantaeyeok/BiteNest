@@ -71,10 +71,10 @@ public class UserController {
 		
 		Optional<User> user = userService.findById(id);
 		
-		User searched = user.get();
+		User searchedUser = user.get();
 		
 		ResponseData rd = ResponseData.builder()
-													   .responseData(searched)
+													   .responseData(searchedUser)
 													   .build();
 
 		return ResponseEntity.ok(rd);
@@ -98,7 +98,8 @@ public class UserController {
 
 	        return ResponseEntity.ok(userService.save(updatedUser));
 	    } else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.notFound()
+										  .build();
 		}
 		
 	}
@@ -111,9 +112,11 @@ public class UserController {
 		
 		if(user.isPresent()) {
 			userService.delete(user.get());
-			return ResponseEntity.noContent().build();
+			return ResponseEntity.noContent()
+										  .build();
 		} else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.notFound()
+										  .build();
 		}
 	}
 	
