@@ -8,34 +8,16 @@ import org.springframework.stereotype.Service;
 import com.bn.biteNest.recipe.model.dao.IngredientTypeMapper;
 import com.bn.biteNest.recipe.model.vo.IngredientTypeVO;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class IngredientTypeServiceImpl implements IngredientTypeService {
 
-    @Autowired
-    private IngredientTypeMapper ingredientTypeMapper;
+    private final IngredientTypeMapper ingredientTypeMapper;
 
     @Override
-    public List<IngredientTypeVO> getAllIngredientTypes() {
-        return ingredientTypeMapper.getAllIngredientTypes();
-    }
-
-    @Override
-    public IngredientTypeVO getIngredientTypeById(int recipeCD, int ingredientCD) {
-        return ingredientTypeMapper.getIngredientTypeById(recipeCD, ingredientCD);
-    }
-
-    @Override
-    public void insertIngredientType(IngredientTypeVO ingredientType) {
-        ingredientTypeMapper.insertIngredientType(ingredientType);
-    }
-
-    @Override
-    public void updateIngredientType(IngredientTypeVO ingredientType) {
-        ingredientTypeMapper.updateIngredientType(ingredientType);
-    }
-
-    @Override
-    public void deleteIngredientType(int recipeCD, int ingredientCD) {
-        ingredientTypeMapper.deleteIngredientType(recipeCD, ingredientCD);
+    public int insertIngredientType(IngredientTypeVO ingredientTypeVO) {
+        return ingredientTypeMapper.insertIngredientType(ingredientTypeVO);
     }
 }

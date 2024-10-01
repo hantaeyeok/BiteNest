@@ -1,6 +1,7 @@
 package com.bn.biteNest.recipe.model.vo;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class IngredientTypeVO {
     private int recipeCD;           // 레시피 기본키
     private int ingredientCD;       // 재료 고유 ID

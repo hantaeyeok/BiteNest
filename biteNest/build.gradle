@@ -1,7 +1,7 @@
 plugins {
-    id 'java'  // 자바 플러그인 적용
-    id 'org.springframework.boot' version '3.3.4'  // Spring Boot 플러그인 적용, Spring Boot 3.3.4 버전 사용
-    id 'io.spring.dependency-management' version '1.1.6'  // Spring 의존성 관리를 위한 플러그인
+    id 'java'
+    id 'org.springframework.boot' version '3.3.4'
+    id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'com.bn'
@@ -9,58 +9,37 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)  // Java 17 사용
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
 configurations {
     compileOnly {
-        extendsFrom annotationProcessor  // Lombok을 위한 컴파일 시 의존성 설정
+        extendsFrom annotationProcessor
     }
 }
 
 repositories {
-    mavenCentral()  // 중앙 Maven 저장소 사용
+    mavenCentral()
 }
 
 dependencies {
-    // 스프링 부트 관련 의존성
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'  // JPA 사용을 위한 기본 의존성
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc'  // JDBC 사용을 위한 기본 의존성
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'  // Thymeleaf 템플릿 엔진 사용 의존성
-    implementation 'org.springframework.boot:spring-boot-starter-web'  // Spring Web 의존성, RESTful API 및 JSON 지원
-
-    // MyBatis 관련 의존성
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'  // MyBatis와 Spring Boot 연동을 위한 의존성
-
-    // Lombok (자동으로 getter/setter 생성, 코드 간결화)
-    compileOnly 'org.projectlombok:lombok'  // 컴파일 시 Lombok 사용
-    annotationProcessor 'org.projectlombok:lombok'  // Lombok을 컴파일 시 자동으로 처리
-
-    // 데이터베이스 의존성
-    runtimeOnly 'com.oracle.database.jdbc:ojdbc11'  // Oracle JDBC 드라이버 (Oracle DB 연결용)
-
-    // 개발 편의 도구
-    implementation 'org.springframework.boot:spring-boot-devtools'  // 개발 시 서버 자동 재시작 등의 편의 기능 제공 (개발 환경에서만 활성화)
-
-    // 보안 관련 의존성
-    implementation 'org.springframework.boot:spring-boot-starter-security'  // Spring Security 의존성 (인증 및 권한 관리)
-
-    // 데이터 검증 도구
-    implementation 'org.springframework.boot:spring-boot-starter-validation'  // 입력 데이터 유효성 검사 기능 제공
-
-    // JSON 데이터 처리용 의존성
-    implementation 'com.fasterxml.jackson.core:jackson-databind'  // JSON 직렬화/역직렬화 기능을 위한 Jackson 의존성
-
-    // Actuator (모니터링 및 관리 도구)
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'  // 애플리케이션 상태 모니터링 및 관리
-
-    // 테스트 관련 의존성
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'  // 테스트를 위한 기본 의존성 (JUnit, Mockito 등 포함)
-    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'  // MyBatis와 관련된 테스트 기능
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'  // JUnit 플랫폼에서 테스트를 실행하기 위한 런처
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
+    implementation 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('bootJar') {
-    mainClassName = 'com.bn.biteNest.BiteNestApplication' // <- 여기에 실제 main 클래스 경로를 입력
+    mainClassName = 'com.bn.biteNest.BiteNestApplication'
 }

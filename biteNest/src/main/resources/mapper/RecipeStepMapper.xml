@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bn.biteNest.recipe.model.dao.RecipeStepMapper">
+
+    <insert id="insertRecipeStep" parameterType="com.bn.biteNest.recipe.model.vo.RecipeStepVO">
+        INSERT 
+          INTO 
+          		RECIPE_STEP_TB 
+          		(
+          		 RECIPE_CD, 
+          		 STEP_ORD, 
+          		 INSTRUCTION, 
+          		 IMAGE_URL
+          		 )
+        VALUES 
+         		(
+         		 #{recipeCD}, 
+         		 #{stepORD}, 
+         		 #{instruction}, 
+         		 #{imageURL}
+         		 )
+    </insert>
+    
+</mapper>

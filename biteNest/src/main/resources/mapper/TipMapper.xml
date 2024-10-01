@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bn.biteNest.recipe.model.dao.TipMapper">
+
+    <insert id="insertTip" parameterType="com.bn.biteNest.recipe.model.vo.TipVO">
+        INSERT 
+          INTO 
+          		TIP_TB 
+          		(
+          		 RECIPE_CD, 
+          		 TIP_CONTENT, 
+          		 TIP_ORD
+          		 )
+        VALUES 
+         		(
+         		 #{recipeCD}, 
+         		 #{tipContent}, 
+         		 #{tipORD}
+         		 )
+    </insert>
+    
+</mapper>

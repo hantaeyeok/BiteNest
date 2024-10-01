@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.bn.biteNest.recipe.model.dto.RecipeDetailDTO;
 import com.bn.biteNest.recipe.model.vo.RecipeVO;
 
 @Mapper
@@ -12,14 +13,10 @@ public interface RecipeMapper {
     List<RecipeVO> getAllRecipes();
 
     // 레시피 ID로 조회
-    RecipeVO getRecipeById(int recipeCd);
+    RecipeDetailDTO selectRecipeById(int recipeCd);
 
     // 레시피 추가
-    void insertRecipe(RecipeVO recipe);
+    int insertRecipe(RecipeVO recipe);
 
-    // 레시피 수정
-    void updateRecipe(RecipeVO recipe);
 
-    // 레시피 삭제
-    void deleteRecipe(int recipeCd);
 }

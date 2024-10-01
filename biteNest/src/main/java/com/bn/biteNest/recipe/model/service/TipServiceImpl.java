@@ -8,34 +8,18 @@ import org.springframework.stereotype.Service;
 import com.bn.biteNest.recipe.model.dao.TipMapper;
 import com.bn.biteNest.recipe.model.vo.TipVO;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class TipServiceImpl implements TipService {
 
-    @Autowired
-    private TipMapper tipMapper;
+    private final TipMapper tipMapper;
 
     @Override
-    public List<TipVO> getAllTips(int recipeCD) {
-        return tipMapper.getAllTips(recipeCD);
+    public int insertTip(TipVO tip) {
+        return tipMapper.insertTip(tip);
     }
 
-    @Override
-    public TipVO getTipById(int tipCD) {
-        return tipMapper.getTipById(tipCD);
-    }
 
-    @Override
-    public void insertTip(TipVO tip) {
-        tipMapper.insertTip(tip);
-    }
-
-    @Override
-    public void updateTip(TipVO tip) {
-        tipMapper.updateTip(tip);
-    }
-
-    @Override
-    public void deleteTip(int tipCD) {
-        tipMapper.deleteTip(tipCD);
-    }
 }

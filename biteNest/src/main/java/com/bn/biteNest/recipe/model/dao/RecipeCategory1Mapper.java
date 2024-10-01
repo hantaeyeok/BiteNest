@@ -8,6 +8,7 @@ import com.bn.biteNest.recipe.model.vo.RecipeCategory1VO;
 
 @Mapper
 public interface RecipeCategory1Mapper {
-    List<RecipeCategory1VO> selectAllCategory1();
-    int selectCategory1CDByName(String category1Name);
+	
+	   Integer selectCategory1IdByName(String category1Name);  // 메서드 이름 변경
+	    String selectCategory1NameById(int category1CD);
 }

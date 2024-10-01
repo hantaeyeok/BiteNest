@@ -1,26 +1,31 @@
 package com.bn.biteNest.recipe.model.service;
 
-import java.util.List;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bn.biteNest.recipe.model.dao.RecipeCategory2Mapper;
-import com.bn.biteNest.recipe.model.vo.RecipeCategory2VO;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
-public class RecipeCategory2ServiceImpl implements RecipeCategory2Service {
+@RequiredArgsConstructor
+public class RecipeCategory2ServiceImpl implements RecipeCategory2Service{
 
-    @Autowired
-    private RecipeCategory2Mapper recipeCategory2Mapper;
+	private final RecipeCategory2Mapper category2Mapper;
+     	
+	@Override
+	public Optional<Integer> getCategory2CDByName(String category2Name) {
+		Integer category2CD = category2Mapper.selectCategory2CDByName(category2Name);
+		return Optional.ofNullable(category2CD); 
+	}
 
-    @Override
-    public List<RecipeCategory2VO> getAllCategory2() {
-        return recipeCategory2Mapper.selectAllCategory2();
+	@Override
+    public Optional<String> getCategory2NameById(int category2CD) {
+        return Optional.ofNullable(category2Mapper.selectCategory2NameById(category2CD));
     }
 
-    @Override
-    public int getCategory2CDByName(String category2Name) {
-        return recipeCategory2Mapper.selectCategory2CDByName(category2Name);
-    }
+
+
+	
 }

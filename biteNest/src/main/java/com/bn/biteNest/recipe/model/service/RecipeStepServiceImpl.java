@@ -15,27 +15,9 @@ public class RecipeStepServiceImpl implements RecipeStepService {
     private RecipeStepMapper recipeStepMapper;
 
     @Override
-    public List<RecipeStepVO> getAllRecipeSteps(int recipeCD) {
-        return recipeStepMapper.getAllRecipeSteps(recipeCD);
+    public int insertRecipeStep(RecipeStepVO step) {
+        return recipeStepMapper.insertRecipeStep(step);
     }
 
-    @Override
-    public RecipeStepVO getRecipeStepById(int stepCD) {
-        return recipeStepMapper.getRecipeStepById(stepCD);
-    }
 
-    @Override
-    public void insertRecipeStep(RecipeStepVO step) {
-        recipeStepMapper.insertRecipeStep(step);
-    }
-
-    @Override
-    public void updateRecipeStep(RecipeStepVO step) {
-        recipeStepMapper.updateRecipeStep(step);
-    }
-
-    @Override
-    public void deleteRecipeStep(int stepCD) {
-        recipeStepMapper.deleteRecipeStep(stepCD);
-    }
 }

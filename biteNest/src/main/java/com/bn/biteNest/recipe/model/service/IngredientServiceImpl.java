@@ -1,48 +1,33 @@
 package com.bn.biteNest.recipe.model.service;
 
-import java.util.List;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bn.biteNest.recipe.model.dao.IngredientMapper;
 import com.bn.biteNest.recipe.model.vo.IngredientVO;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class IngredientServiceImpl implements IngredientService {
 
-    @Autowired
-    private IngredientMapper ingredientMapper;
-
+    private final IngredientMapper ingredientMapper;
+    
     @Override
-    public List<IngredientVO> getAllIngredients() {
-        return ingredientMapper.getAllIngredients();
+    public Optional<IngredientVO> findByName(String ingredientName) {
+        return Optional.ofNullable(ingredientMapper.selectByName(ingredientName));
     }
     
     @Override
-	public IngredientVO findByName(String ingredientName) {
-		return ingredientMapper.findByName(ingredientName);
-	}
+    public int saveNewIngredient(String ingredientName) {
+        IngredientVO newIngredient = IngredientVO.builder().ingredientNM(ingredientName).build();
 
+        if (ingredientMapper.insertIngredient(newIngredient) <= 0) {
+            throw new RuntimeException("Failed to insert new ingredient: " + ingredientName);
+        }
 
-
-	@Override
-    public IngredientVO getIngredientById(int ingredientCD) {
-        return ingredientMapper.getIngredientById(ingredientCD);
-    }
-
-    @Override
-    public void insertIngredient(IngredientVO ingredient) {
-        ingredientMapper.insertIngredient(ingredient);
-    }
-
-    @Override
-    public void updateIngredient(IngredientVO ingredient) {
-        ingredientMapper.updateIngredient(ingredient);
-    }
-
-    @Override
-    public void deleteIngredient(int ingredientCD) {
-        ingredientMapper.deleteIngredient(ingredientCD);
+        return newIngredient.getIngredientCD();
     }
 }

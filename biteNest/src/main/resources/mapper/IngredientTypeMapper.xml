@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bn.biteNest.recipe.model.dao.IngredientTypeMapper">
+
+    <insert id="insertIngredientType" parameterType="com.bn.biteNest.recipe.model.vo.IngredientTypeVO">
+        INSERT 
+          INTO 
+          		INGREDIENT_TYPE_TB 
+          		(
+          		 RECIPE_CD,
+          		 INGREDIENT_CD, 
+          		 INGREDIENT_AMT, 
+          		 INGREDIENT_TYPE
+          		 )
+        VALUES 
+        		(
+        		 #{recipeCD},
+        		 #{ingredientCD}, 
+        		 #{ingredientAmt}, 
+        		 #{ingredientType}
+        		 )
+    </insert>
+    
+</mapper>

@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
 
+@Component
 public class FileUpload {
 	public String saveImage(MultipartFile upfile, HttpSession session, String recipeName, Integer stepNumber) {
 

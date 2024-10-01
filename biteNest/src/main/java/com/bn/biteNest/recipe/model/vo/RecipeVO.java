@@ -3,6 +3,7 @@ package com.bn.biteNest.recipe.model.vo;
 import java.sql.Date;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class RecipeVO {
     private int recipeCD;               // 레시피 기본키
     private int userNO;                 // 사용자 번호

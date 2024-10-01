@@ -8,9 +8,6 @@ import com.bn.biteNest.recipe.model.vo.RecipeStepVO;
 
 @Mapper
 public interface RecipeStepMapper {
-    List<RecipeStepVO> getAllRecipeSteps(int recipeCD);
-    RecipeStepVO getRecipeStepById(int stepCD);
-    void insertRecipeStep(RecipeStepVO step);
-    void updateRecipeStep(RecipeStepVO step);
-    void deleteRecipeStep(int stepCD);
+
+	int insertRecipeStep(RecipeStepVO step);
 }

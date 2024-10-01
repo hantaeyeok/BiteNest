@@ -1,16 +1,12 @@
 package com.bn.biteNest.recipe.model.service;
 
-import java.util.List;
+import java.util.Optional;
 
 import com.bn.biteNest.recipe.model.vo.IngredientVO;
 
 public interface IngredientService {
-    List<IngredientVO> getAllIngredients();
-    IngredientVO getIngredientById(int ingredientCD);
-    IngredientVO findByName(String ingredientName);
     
-    
-    void insertIngredient(IngredientVO ingredient);
-    void updateIngredient(IngredientVO ingredient);
-    void deleteIngredient(int ingredientCD);
+	Optional<IngredientVO> findByName(String ingredientName);
+    int saveNewIngredient(String ingredientName);
+
 }

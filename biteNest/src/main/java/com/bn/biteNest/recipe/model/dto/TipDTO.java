@@ -1,4 +1,4 @@
-package com.bn.biteNest.recipe.model.vo;
+package com.bn.biteNest.recipe.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +9,11 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class IngredientVO {
-    private int ingredientCD;       // 재료 고유 ID
-    private String ingredientNM;    // 재료 이름
+@ToString
+public class TipDTO {
+    private int tipOrder;                  // 팁 순서
+    private String tipContent;             // 팁 내용
 }

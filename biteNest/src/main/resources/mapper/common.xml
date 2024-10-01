@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="common">
+
+    <!-- 공통적인 SELECT 필드 -->
+    <sql id="commonSelectFields">
+        RECIPE_CD, RECIPE_NM, RECIPE_DESCRIPTION, ESTIMATED_TIME, COOKING_SERVINGS, RECIPE_MAIN_IMAGE, CATEGORY1_CD, CATEGORY2_CD
+    </sql>
+
+    <!-- 공통 페이징 쿼리 -->
+    <sql id="paging">
+        LIMIT #{limit} OFFSET #{offset}
+    </sql>
+
+    <!-- 공통적인 SELECT WHERE 조건 -->
+    <sql id="commonWhereCondition">
+        <where>
+            <if test="recipeCD != null"> AND RECIPE_CD = #{recipeCD} </if>
+            <if test="recipeNM != null"> AND RECIPE_NM = #{recipeNM} </if>
+        </where>
+    </sql>
+
+</mapper>
