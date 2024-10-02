@@ -14,6 +14,7 @@ import lombok.ToString;
 @Builder
 @ToString
 public class TipDTO {
-    private int tipOrder;                  // ÆÁ ¼ø¼­
-    private String tipContent;             // ÆÁ ³»¿ë
+    private int tipCD;
+    private String tipContent;
+    private int tipORD;
 }

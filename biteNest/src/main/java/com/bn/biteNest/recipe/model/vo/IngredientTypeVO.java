@@ -14,6 +14,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 public class IngredientTypeVO {
+	private int typeCD;
     private int recipeCD;           // 레시피 기본키
     private int ingredientCD;       // 재료 고유 ID
     private String ingredientType;  // 재료 유형 (주재료, 부재료 등)

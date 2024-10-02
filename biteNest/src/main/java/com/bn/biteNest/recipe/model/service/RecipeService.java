@@ -16,8 +16,11 @@ import jakarta.servlet.http.HttpSession;
 
 public interface RecipeService {
 
-	//레시피 등록 로직
-	public int createRecipeWithDetails(
+    // ID로 레시피 조회
+	RecipeDetailDTO getRecipeById(int recipeCD); // 레시피 ID로 상세 조회
+	
+	//레시피 등록
+	int createRecipeWithDetails(
             Map<String, String> formData,
             List<Map<String, String>> ingredients,
             List<Map<String, String>> steps,
@@ -26,9 +29,16 @@ public interface RecipeService {
             List<MultipartFile> stepImages,
             HttpSession session);
 
-
-    // ID로 레시피 조회
-        RecipeDetailDTO getRecipeById(int recipeCD); // 레시피 ID로 상세 조회
+	//레시피 수정
+	boolean updateRecipeWithDetails(
+			int recipeCD, 
+			Map<String, String> formData,
+			List<Map<String, String>> ingredients, 
+			List<Map<String, String>> steps, 
+			List<Map<String, String>> tips,
+			MultipartFile mainImage, 
+			List<MultipartFile> stepImages, 
+			HttpSession session);
     
     
 }

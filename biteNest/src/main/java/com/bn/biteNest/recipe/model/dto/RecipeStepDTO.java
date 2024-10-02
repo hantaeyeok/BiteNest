@@ -14,7 +14,8 @@ import lombok.ToString;
 @Builder
 @ToString
 public class RecipeStepDTO {
-    private int stepOrder;                 // 조리 단계 순서
-    private String instruction;            // 조리 단계 설명
-    private String imageURL;               // 조리 단계 이미지 경로
+    private int stepCD;
+    private int stepORD;
+    private String instruction;
+    private String imageURL;            // 조리 단계 이미지 경로
 }

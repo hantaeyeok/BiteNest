@@ -13,7 +13,7 @@ public interface RecipeMapper {
     List<RecipeVO> getAllRecipes();
 
     // 레시피 ID로 조회
-    RecipeDetailDTO selectRecipeById(int recipeCd);
+    RecipeDetailDTO selectRecipeDetailById(int recipeCd);
 
     // 레시피 추가
     int insertRecipe(RecipeVO recipe);

@@ -10,12 +10,14 @@
           INTO 
           		TIP_TB 
           		(
+          		 TIP_CD,
           		 RECIPE_CD, 
           		 TIP_CONTENT, 
           		 TIP_ORD
           		 )
         VALUES 
          		(
+         		 TIP_SEQ.NEXTVAL,
          		 #{recipeCD}, 
          		 #{tipContent}, 
          		 #{tipORD}

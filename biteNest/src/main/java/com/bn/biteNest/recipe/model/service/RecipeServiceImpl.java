@@ -107,7 +107,6 @@ public class RecipeServiceImpl implements RecipeService {
 //    }
     private Optional<RecipeVO> createRecipe(Map<String, String> formData, HttpSession session, MultipartFile mainImage) {
         try {
-            // 입력 데이터 확인
             String recipeName = formData.get("recipeName");
             String recipeDescription = formData.get("recipeDescription");
             int estimatedTime = Integer.parseInt(formData.get("estimatedTime"));
@@ -115,10 +114,6 @@ public class RecipeServiceImpl implements RecipeService {
             String category1Name = formData.get("category1Name");
             String category2Name = formData.get("category2Name");
 
-            log.info("Recipe Name: {}, Description: {}, Estimated Time: {}, Servings: {}, Category1: {}, Category2: {}",
-                     recipeName, recipeDescription, estimatedTime, cookingServings, category1Name, category2Name);
-
-            // 카테고리 코드 조회
             int category1CD = getCategory1CDByName(category1Name);
             int category2CD = getCategory2CDByName(category2Name);
 
@@ -134,7 +129,7 @@ public class RecipeServiceImpl implements RecipeService {
                     .build();
 
             if (mainImage != null && !mainImage.isEmpty()) {
-                String mainImagePath = fileUpload.saveImage(mainImage, session, recipeName, null);
+                String mainImagePath = fileUpload.saveImage(mainImage, recipeName, null);
                 recipeVO.setRecipeMainImage(mainImagePath);
             }
 
@@ -175,6 +170,7 @@ public class RecipeServiceImpl implements RecipeService {
             String ingredientAmount = ingredient.get("ingredientAmount");
             String ingredientType = ingredient.get("ingredientType");
 
+            log.info("ingredienttype : "+ingredientType);
             // 재료 이름을 기준으로 조회하고, 존재하지 않으면 새로 추가하여 ID를 받음
             int ingredientCD = ingredientService.findByName(ingredientName)
                     .map(ingredientVO -> ingredientVO.getIngredientCD())  // 재료가 존재할 경우 ID 반환
@@ -203,10 +199,11 @@ public class RecipeServiceImpl implements RecipeService {
                     .recipeCD(recipeCD)
                     .stepORD(Integer.parseInt(step.get("stepsOrder")))
                     .instruction(step.get("stepsDescription"))
+                    .imageURL("")
                     .build();
 
             if (stepImages != null && i < stepImages.size() && !stepImages.get(i).isEmpty()) {
-                String stepImagePath = fileUpload.saveImage(stepImages.get(i), session, recipeName, i + 1);
+                String stepImagePath = fileUpload.saveImage(stepImages.get(i), recipeName, i + 1);
                 stepVO.setImageURL(stepImagePath);
             }
 
@@ -231,7 +228,7 @@ public class RecipeServiceImpl implements RecipeService {
     // 레시피 전체 조회
     @Override
     public RecipeDetailDTO getRecipeById(int recipeCD) {
-        RecipeDetailDTO recipeDetail = recipeMapper.selectRecipeById(recipeCD);
+        RecipeDetailDTO recipeDetail = recipeMapper.selectRecipeDetailById(recipeCD);
 
         if (recipeDetail == null) {
             throw new RuntimeException("Recipe not found for ID: " + recipeCD);

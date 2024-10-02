@@ -8,8 +8,9 @@
     <insert id="insertIngredientType" parameterType="com.bn.biteNest.recipe.model.vo.IngredientTypeVO">
         INSERT 
           INTO 
-          		INGREDIENT_TYPE_TB 
+          		RECIPE_INGREDIENT_TYPE_TB 
           		(
+          		 TYPE_CD,
           		 RECIPE_CD,
           		 INGREDIENT_CD, 
           		 INGREDIENT_AMT, 
@@ -17,6 +18,7 @@
           		 )
         VALUES 
         		(
+        		 TYPE_SEQ.NEXTVAL,
         		 #{recipeCD},
         		 #{ingredientCD}, 
         		 #{ingredientAmt}, 

@@ -10,7 +10,7 @@
         		INGREDIENT_CD,
         		INGREDIENT_NM 
      	  FROM 
-     	  		INGREDIENT_TB 
+     	  		RECIPE_INGREDIENT_TB 
      	 WHERE
      	 		INGREDIENT_NM = #{ingredientName}
     </select>
@@ -24,7 +24,7 @@
         </selectKey>
         INSERT 
           INTO 
-          		INGREDIENT_TB 
+          		RECIPE_INGREDIENT_TB 
           		(
           		 INGREDIENT_CD,
           		 INGREDIENT_NM

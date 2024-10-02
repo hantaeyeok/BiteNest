@@ -10,6 +10,7 @@
           INTO 
           		RECIPE_STEP_TB 
           		(
+          		 STEP_CD,
           		 RECIPE_CD, 
           		 STEP_ORD, 
           		 INSTRUCTION, 
@@ -17,10 +18,11 @@
           		 )
         VALUES 
          		(
+         		 STEP_SEQ.NEXTVAL,
          		 #{recipeCD}, 
          		 #{stepORD}, 
          		 #{instruction}, 
-         		 #{imageURL}
+         		 #{imageURL, jdbcType=VARCHAR}
          		 )
     </insert>
     
