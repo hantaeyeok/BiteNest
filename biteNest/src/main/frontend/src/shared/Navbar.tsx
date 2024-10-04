@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import useUser from '@hooks/auth/useUser'
-import Button from '@/components/shared/Button'
 import instance from '@/util/axios'
 
 const Navbar: React.FC = () => {
@@ -10,22 +9,7 @@ const Navbar: React.FC = () => {
   const showSignButton = !['/signup', '/signin'].includes(location.pathname)
 
   const { user, setUser } = useUser()
-  const navigate = useNavigate()
   console.log('user', user)
-
-  const handleProtectedLink = useCallback(
-    (path: string) => {
-      console.log('link-user', user)
-
-      if (!user) {
-        alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.')
-        navigate('/signin')
-      } else {
-        navigate(path)
-      }
-    },
-    [user, navigate],
-  ) // useCallback 디펜던시로 user 추가
 
   const handleLogout = async () => {
     try {
@@ -93,12 +77,12 @@ const Navbar: React.FC = () => {
             </div>
 
             <div className="hidden md:ml-6 md:flex md:space-x-8">
-              <button
-                onClick={() => handleProtectedLink(`/mypage/${user?.id}`)}
-                className="text-brown-300 hover:text-brown-100 px-3 py-2 rounded-md text-lg font-medium"
+              <a
+                href={`/mypage/${user?.id}`}
+                className="flex items-center justify-center text-brown-300 hover:text-brown-100 px-3 py-2 rounded-md text-lg font-medium"
               >
                 냉장고 관리
-              </button>
+              </a>
               <a
                 href="/recipes"
                 className="flex items-center justify-center text-brown-300 hover:text-brown-100 px-3 py-2 rounded-md text-lg font-medium"
@@ -145,7 +129,7 @@ const Navbar: React.FC = () => {
         {isOpen && (
           <div className="md:hidden">
             <a
-              href={`/fridge/${user?.id ?? ''}`} // user?.id로 안전하게 접근
+              href={`/mypage/${user?.id}`} // user?.id로 안전하게 접근
               className="block text-brown-300 hover:text-brown-100 px-3 py-2 rounded-md text-lg font-medium"
             >
               냉장고관리

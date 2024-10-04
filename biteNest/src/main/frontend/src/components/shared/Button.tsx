@@ -21,11 +21,11 @@ function Button({
   // 크기 설정
   const sizeStyle =
     size === 'small'
-      ? 'px-2 py-1 text-sm my-3'
+      ? 'px-3 py-2 text-sm'
       : size === 'large'
-        ? 'px-6 py-3 text-lg my-3'
+        ? 'px-6 py-3 text-lg'
         : size === 'full'
-          ? 'w-full px-4 py-2 text-md my-3'
+          ? 'w-full px-4 py-2 text-md'
           : 'px-4 py-2 text-md my-3' // 기본은 medium
 
   // disabled일 때 투명도를 설정

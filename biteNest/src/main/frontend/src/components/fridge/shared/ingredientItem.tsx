@@ -1,6 +1,12 @@
 import { Ingredient } from '@models/ingredient'
 
-function IngredientItem({ ingredient }: { ingredient: Ingredient }) {
+function IngredientItem({
+  ingredient,
+  onClick,
+}: {
+  ingredient: Ingredient
+  onClick: () => void
+}) {
   const icons: { [key: number]: JSX.Element } = {
     1: (
       <svg

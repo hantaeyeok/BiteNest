@@ -15,6 +15,7 @@ function SigninPage() {
 
   const handleSubmit = useCallback(
     async (formValues: FormValues) => {
+      console.log('formvalue', formValues)
       try {
         const response = await instance.post(
           'https://3ccfb3c6-7a46-4902-b117-a23e940861d2.mock.pstmn.io/api/login',

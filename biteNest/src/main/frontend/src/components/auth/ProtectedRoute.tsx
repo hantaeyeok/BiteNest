@@ -8,6 +8,7 @@ export function ProtectedRoute() {
 
   if (!user) {
     // 사용자가 로그인되지 않았다면 로그인 페이지로 리다이렉트
+    alert('로그인이 필요한 페이지입니다. 로그인 창으로 이동합니다')
     return <Navigate to="/signin" state={{ from: location }} replace />
   }
 
