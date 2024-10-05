@@ -138,3 +138,7 @@ sqldeveloper/
 # Yarn cache
 .yarn/*
 !.yarn/cache
+
+*/node_modules
+/.pnp
+.pnp.js
