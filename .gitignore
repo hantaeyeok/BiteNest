@@ -138,3 +138,6 @@ sqldeveloper/
 # Yarn cache
 .yarn/*
 !.yarn/cache
+
+node_modules
+yarn-error.log

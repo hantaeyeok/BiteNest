@@ -14,6 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class Member {
 
-	private final MemberService memberService;
+//	private final MemberService memberService;
 	
 }
