@@ -1,6 +1,6 @@
 package com.bn.biteNest.recipe.model.dao;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -9,14 +9,13 @@ import com.bn.biteNest.recipe.model.vo.RecipeVO;
 
 @Mapper
 public interface RecipeMapper {
-    // 레시피 목록 조회
-    List<RecipeVO> getAllRecipes();
 
-    // 레시피 ID로 조회
-    RecipeDetailDTO selectRecipeDetailById(int recipeCd);
-
-    // 레시피 추가
+    Optional<RecipeDetailDTO> selectRecipeDetailByCD(int recipeCd);
     int insertRecipe(RecipeVO recipe);
+	int updateRecipe(RecipeVO recipeVO);
+	int deleteRecipeByCD(int recipeCD);
 
-
+	
+    
+    
 }

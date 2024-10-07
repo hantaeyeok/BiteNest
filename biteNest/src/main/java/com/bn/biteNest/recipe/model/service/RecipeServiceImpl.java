@@ -2,12 +2,12 @@ package com.bn.biteNest.recipe.model.service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bn.biteNest.common.FileUpload;
+import com.bn.biteNest.common.RecipeFileDelete;
+import com.bn.biteNest.common.RecipeFileUpload;
 import com.bn.biteNest.recipe.model.dao.RecipeMapper;
 import com.bn.biteNest.recipe.model.dto.RecipeDetailDTO;
 import com.bn.biteNest.recipe.model.vo.IngredientTypeVO;
@@ -15,7 +15,6 @@ import com.bn.biteNest.recipe.model.vo.RecipeStepVO;
 import com.bn.biteNest.recipe.model.vo.RecipeVO;
 import com.bn.biteNest.recipe.model.vo.TipVO;
 
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,210 +29,235 @@ public class RecipeServiceImpl implements RecipeService {
     private final IngredientTypeService ingredientTypeService;
     private final RecipeStepService recipeStepService;
     private final TipService tipService;
-    private final FileUpload fileUpload;
+    private final RecipeFileUpload fileUpload;
     private final RecipeCategory1Service recipeCategory1Service;
     private final RecipeCategory2Service recipeCategory2Service;
-
+    private final RecipeFileDelete fileDelete;
+    
+    // 1. Recipe Insert
     @Transactional
     @Override
-    public int createRecipeWithDetails(
-            Map<String, String> formData,
-            List<Map<String, String>> ingredients,
-            List<Map<String, String>> steps,
-            List<Map<String, String>> tips,
-            MultipartFile mainImage,
-            List<MultipartFile> stepImages,
-            HttpSession session) {
-
-        try {
-            // 1. ∑πΩ√«« ±‚∫ª ¡§∫∏ ª˝º∫
-            Optional<RecipeVO> recipeVOOptional = createRecipe(formData, session, mainImage);
-            RecipeVO recipeVO = recipeVOOptional.orElseThrow(() -> new RuntimeException("Failed to create recipe."));
-
-            // 2. ¿Á∑· ¡§∫∏ ¿˙¿Â
-            boolean ingredientsSaved = saveIngredients(recipeVO.getRecipeCD(), ingredients);
-            if (!ingredientsSaved) throw new RuntimeException("Failed to save ingredients.");
-
-            // 3. ¡∂∏Æ ¥‹∞Ë ¡§∫∏ ¿˙¿Â
-            boolean stepsSaved = saveSteps(recipeVO.getRecipeCD(), steps, stepImages, session, recipeVO.getRecipeNM());
-            if (!stepsSaved) throw new RuntimeException("Failed to save steps.");
-
-            // 4. ∆¡ ¡§∫∏ ¿˙¿Â
-            boolean tipsSaved = saveTips(recipeVO.getRecipeCD(), tips);
-            if (!tipsSaved) throw new RuntimeException("Failed to save tips.");
-
-            return recipeVO.getRecipeCD();
-
-        } catch (Exception e) {
-            log.error("Recipe creation failed: ", e);
-            throw new RuntimeException("Recipe creation failed: " + e.getMessage());
-        }
+    public boolean createRecipeWithDetails(Map<String, String> formData, 
+    									   List<Map<String, String>> ingredients,
+                                           List<Map<String, String>> steps, 
+                                           List<Map<String, String>> tips,
+                                           MultipartFile mainImage, 
+                                           List<MultipartFile> stepImages) {
+        RecipeVO recipeVO = createRecipe(formData, mainImage);
+        return saveRecipeDetails(recipeVO.getRecipeCD(), ingredients, steps, tips, stepImages, recipeVO.getRecipeNM());
     }
 
-    // 1-1. ∑πΩ√«« ¡§∫∏ ª˝º∫
-//    private Optional<RecipeVO> createRecipe(Map<String, String> formData, HttpSession session, MultipartFile mainImage) {
-//        try {
-//            String recipeName = formData.get("recipeName");
-//            String recipeDescription = formData.get("recipeDescription");
-//            int estimatedTime = Integer.parseInt(formData.get("estimatedTime"));
-//            int cookingServings = Integer.parseInt(formData.get("cookingServings"));
-//            String category1Name = formData.get("category1Name");
-//            String category2Name = formData.get("category2Name");
-//            
-//            int category1CD = getCategory1CDByName(category1Name);  // 1¬˜ ƒ´≈◊∞Ì∏Æ ƒ⁄µÂ ¡∂»∏
-//            int category2CD = getCategory2CDByName(category2Name);  // 2¬˜ ƒ´≈◊∞Ì∏Æ ƒ⁄µÂ ¡∂»∏
-//
-//            RecipeVO recipeVO = RecipeVO.builder()
-//                    .recipeNM(recipeName)
-//                    .recipeDescription(recipeDescription)
-//                    .estimatedTime(estimatedTime)
-//                    .cookingServings(cookingServings)
-//                    .category1CD(category1CD)
-//                    .category2CD(category2CD)
-//                    .build();
-//
-//            // ∏ﬁ¿Œ ¿ÃπÃ¡ˆ ¿˙¿Â
-//            if (mainImage != null && !mainImage.isEmpty()) {
-//                String mainImagePath = fileUpload.saveImage(mainImage, session, recipeName, null);
-//                recipeVO.setRecipeMainImage(mainImagePath);  // ¿˙¿Âµ» ∏ﬁ¿Œ ¿ÃπÃ¡ˆ ∞Ê∑Œ º≥¡§
-//            }
-//
-//            return recipeMapper.insertRecipe(recipeVO) > 0 ? Optional.of(recipeVO) : Optional.empty();
-//
-//        } catch (Exception e) {
-//            log.error("Failed to create recipe: ", e);
-//            return Optional.empty();
-//        }
-//    }
-    private Optional<RecipeVO> createRecipe(Map<String, String> formData, HttpSession session, MultipartFile mainImage) {
-        try {
-            String recipeName = formData.get("recipeName");
-            String recipeDescription = formData.get("recipeDescription");
-            int estimatedTime = Integer.parseInt(formData.get("estimatedTime"));
-            int cookingServings = Integer.parseInt(formData.get("cookingServings"));
-            String category1Name = formData.get("category1Name");
-            String category2Name = formData.get("category2Name");
-
-            int category1CD = getCategory1CDByName(category1Name);
-            int category2CD = getCategory2CDByName(category2Name);
-
-            log.info("Category1CD: {}, Category2CD: {}", category1CD, category2CD);
-
-            RecipeVO recipeVO = RecipeVO.builder()
-                    .recipeNM(recipeName)
-                    .recipeDescription(recipeDescription)
-                    .estimatedTime(estimatedTime)
-                    .cookingServings(cookingServings)
-                    .category1CD(category1CD)
-                    .category2CD(category2CD)
-                    .build();
-
-            if (mainImage != null && !mainImage.isEmpty()) {
-                String mainImagePath = fileUpload.saveImage(mainImage, recipeName, null);
-                recipeVO.setRecipeMainImage(mainImagePath);
-            }
-
-            log.info("Inserting recipe into the database: {}", recipeVO);
-
-            // µ•¿Ã≈Õ∫£¿ÃΩ∫ø° ª¿‘ Ω√µµ
-            if (recipeMapper.insertRecipe(recipeVO) > 0) {
-                log.info("Recipe successfully created: {}", recipeVO.getRecipeCD());
-                return Optional.of(recipeVO);
-            } else {
-                log.warn("Failed to insert recipe into database.");
-                return Optional.empty();
-            }
-
-        } catch (Exception e) {
-            log.error("Failed to create recipe: ", e);
-            return Optional.empty();
+    // 1-1. Recipe Í∏∞Î≥∏ Ï†ïÎ≥¥ insert
+    private RecipeVO createRecipe(Map<String, String> formData, MultipartFile mainImage) {
+        RecipeVO recipeVO = buildRecipeVO(formData, mainImage);
+        if (recipeMapper.insertRecipe(recipeVO) <= 0) {
+            throw new RuntimeException("Failed to create recipe in the database.");
         }
+        return recipeVO;
     }
 
+    // 1-1-1. RecipeVO ÏÉùÏÑ± (Î†àÏãúÌîº Í∏∞Î≥∏ Ï†ïÎ≥¥ ÎπåÎìú)
+    private RecipeVO buildRecipeVO(Map<String, String> formData, MultipartFile mainImage) {
+        int category1CD = getCategory1CDByName(formData.get("category1Name"));
+        int category2CD = getCategory2CDByName(formData.get("category2Name"));
 
-    // 1-1-1. ƒ´≈◊∞Ì∏Æ1 ƒ⁄µÂ ¡∂»∏
+        String mainImagePath = (mainImage != null && !mainImage.isEmpty())
+        		? fileUpload.saveImage(mainImage, formData.get("recipeName"), null)
+                : "";
+
+        return RecipeVO.builder()
+		                .recipeNM(formData.get("recipeName"))
+		                .recipeDescription(formData.get("recipeDescription"))
+		                .estimatedTime(Integer.parseInt(formData.get("estimatedTime")))
+		                .cookingServings(Integer.parseInt(formData.get("cookingServings")))
+		                .category1CD(category1CD)
+		                .category2CD(category2CD)
+		                .recipeMainImage(mainImagePath)
+		                .build();
+    }
+
+    // 1-1-2. 1Ï∞® Ïπ¥ÌÖåÍ≥†Î¶¨ CD Ï°∞Ìöå
     private int getCategory1CDByName(String category1Name) {
         return recipeCategory1Service.getCategory1CDByName(category1Name)
-                .orElseThrow(() -> new RuntimeException("Invalid Category1 Name: " + category1Name));
+        		.orElseThrow(() -> new RuntimeException("Invalid Category1 Name: " + category1Name));
     }
 
-    // 1-1-2. ƒ´≈◊∞Ì∏Æ2 ƒ⁄µÂ ¡∂»∏
+    // 1-1-3. 2Ï∞® Ïπ¥ÌÖåÍ≥†Î¶¨ CD Ï°∞Ìöå
     private int getCategory2CDByName(String category2Name) {
         return recipeCategory2Service.getCategory2CDByName(category2Name)
                 .orElseThrow(() -> new RuntimeException("Invalid Category2 Name: " + category2Name));
     }
 
-    // 1-2. ¿Á∑· ¡§∫∏ ¿˙¿Â
+    // 1-2. Recipe ÏÑ∏Î∂Ä Ï†ïÎ≥¥ insert (Ïû¨Î£å, Ï°∞Î¶¨ Îã®Í≥Ñ, ÌåÅ Ï†ïÎ≥¥ Ï†ÄÏû•)
+    private boolean saveRecipeDetails(int recipeCD, 
+    								  List<Map<String, String>> ingredients, 
+    								  List<Map<String, String>> steps,
+                                      List<Map<String, String>> tips, 
+                                      List<MultipartFile> stepImages, 
+                                      String recipeName) {
+        return saveIngredients(recipeCD, ingredients) &&
+               saveSteps(recipeCD, steps, stepImages, recipeName) &&
+               saveTips(recipeCD, tips);
+    }
+
+    // 1-2-1. Ïû¨Î£å Ï†ïÎ≥¥ Ï†ÄÏû•
     private boolean saveIngredients(int recipeCD, List<Map<String, String>> ingredients) {
         for (Map<String, String> ingredient : ingredients) {
-            String ingredientName = ingredient.get("ingredientName");
-            String ingredientAmount = ingredient.get("ingredientAmount");
-            String ingredientType = ingredient.get("ingredientType");
-
-            log.info("ingredienttype : "+ingredientType);
-            // ¿Á∑· ¿Ã∏ß¿ª ±‚¡ÿ¿∏∑Œ ¡∂»∏«œ∞Ì, ¡∏¿Á«œ¡ˆ æ ¿∏∏È ªı∑Œ √ﬂ∞°«œø© ID∏¶ πﬁ¿Ω
-            int ingredientCD = ingredientService.findByName(ingredientName)
-                    .map(ingredientVO -> ingredientVO.getIngredientCD())  // ¿Á∑·∞° ¡∏¿Á«“ ∞ÊøÏ ID π›»Ø
-                    .orElseGet(() -> ingredientService.saveNewIngredient(ingredientName)); // æ¯¿∏∏È ªı ¿Á∑· √ﬂ∞° »ƒ ID π›»Ø
+            int ingredientCD = ingredientService.findByName(ingredient.get("ingredientName"))
+                                                .map(ingredientVO -> ingredientVO.getIngredientCD())
+                                                .orElseGet(() -> ingredientService.saveNewIngredient(ingredient.get("ingredientName")));
 
             IngredientTypeVO ingredientTypeVO = IngredientTypeVO.builder()
-                    .recipeCD(recipeCD)
-                    .ingredientCD(ingredientCD)
-                    .ingredientAmt(ingredientAmount)
-                    .ingredientType(ingredientType)
-                    .build();
+											            		.recipeCD(recipeCD)
+											                    .ingredientCD(ingredientCD)
+											                    .ingredientAmt(ingredient.get("ingredientAmount"))
+											                    .ingredientType(ingredient.get("ingredientType"))
+											                    .build();
 
-            if (ingredientTypeService.insertIngredientType(ingredientTypeVO) <= 0) {
-                return false;  
+            if (!ingredientTypeService.insertIngredientType(ingredientTypeVO)) {
+                return false;
             }
         }
         return true;
     }
 
-    // 1-3. ¡∂∏Æ ¥‹∞Ë ¡§∫∏ ¿˙¿Â
-    private boolean saveSteps(int recipeCD, List<Map<String, String>> steps, List<MultipartFile> stepImages, HttpSession session, String recipeName) throws Exception {
+    // 1-2-2. Ï°∞Î¶¨ Îã®Í≥Ñ Ï†ïÎ≥¥ Ï†ÄÏû•
+    private boolean saveSteps(int recipeCD, 
+    						  List<Map<String, String>> steps, 
+    						  List<MultipartFile> stepImages, 
+    						  String recipeName) {
+    	
         for (int i = 0; i < steps.size(); i++) {
-            Map<String, String> step = steps.get(i);
+            String stepImagePath = (i < stepImages.size() && !stepImages.get(i).isEmpty())
+                    ? fileUpload.saveImage(stepImages.get(i), recipeName, i + 1)
+                    : "";
 
             RecipeStepVO stepVO = RecipeStepVO.builder()
-                    .recipeCD(recipeCD)
-                    .stepORD(Integer.parseInt(step.get("stepsOrder")))
-                    .instruction(step.get("stepsDescription"))
-                    .imageURL("")
-                    .build();
+						                      .recipeCD(recipeCD)
+						                      .stepORD(Integer.parseInt(steps.get(i).get("stepsOrder")))
+						                      .instruction(steps.get(i).get("stepsDescription"))
+						                      .imageURL(stepImagePath)
+						                      .build();
 
-            if (stepImages != null && i < stepImages.size() && !stepImages.get(i).isEmpty()) {
-                String stepImagePath = fileUpload.saveImage(stepImages.get(i), recipeName, i + 1);
-                stepVO.setImageURL(stepImagePath);
-            }
-
-            if (recipeStepService.insertRecipeStep(stepVO) <= 0) return false;
+            if (!recipeStepService.insertRecipeStep(stepVO)) { 
+            	return false; 
+            	}
         }
         return true;
     }
 
-    // 1-4. ∆¡ ¡§∫∏ ¿˙¿Â
+    // 1-2-3. ÌåÅ Ï†ïÎ≥¥ Ï†ÄÏû•
     private boolean saveTips(int recipeCD, List<Map<String, String>> tips) {
         for (Map<String, String> tip : tips) {
-            TipVO tipVO = TipVO.builder()
-                    .recipeCD(recipeCD)
-                    .tipContent(tip.get("tipContent"))
-                    .tipORD(Integer.parseInt(tip.get("tipOrder")))
-                    .build();
-            if (tipService.insertTip(tipVO) <= 0) return false;
+            TipVO tipVO =  TipVO.builder()
+			                    .recipeCD(recipeCD)
+			                    .tipContent(tip.get("tipContent"))
+			                    .tipORD(Integer.parseInt(tip.get("tipOrder")))
+			                    .build();
+
+            if (!tipService.insertTip(tipVO)) {
+                return false;
+            }
         }
         return true;
     }
-
-    // ∑πΩ√«« ¿¸√º ¡∂»∏
+    
+    
+    
+ // 2. Recipe Update 
+    @Transactional
     @Override
-    public RecipeDetailDTO getRecipeById(int recipeCD) {
-        RecipeDetailDTO recipeDetail = recipeMapper.selectRecipeDetailById(recipeCD);
+    public boolean updateRecipeWithDetails(int recipeCD,
+    									   Map<String, String> formData, 
+    									   List<Map<String, String>> ingredients,
+                                           List<Map<String, String>> steps, 
+                                           List<Map<String, String>> tips,
+                                           MultipartFile mainImage, 
+                                           List<MultipartFile> stepImages) {
+        boolean isRecipeUpdated = updateRecipe(recipeCD, formData, mainImage);
+        boolean areDetailsUpdated = updateRecipeDetails(recipeCD, ingredients, steps, tips, stepImages, formData.get("recipeName"));
+        return isRecipeUpdated && areDetailsUpdated;
+    }
 
-        if (recipeDetail == null) {
-            throw new RuntimeException("Recipe not found for ID: " + recipeCD);
+    // 2-1. Recipe Í∏∞Î≥∏ Ï†ïÎ≥¥ update
+    private boolean updateRecipe(int recipeCD, Map<String, String> formData, MultipartFile mainImage) {
+    	 // Í∏∞Ï°¥ Î†àÏãúÌîº Ï†ïÎ≥¥Î•º Ï°∞ÌöåÌïòÏó¨ Í∏∞Ï°¥ ÌååÏùº Í≤ΩÎ°úÎ•º Í∞ÄÏ†∏Ïò¥
+        RecipeDetailDTO existingRecipe = getRecipeByCD(recipeCD);
+        // Í∏∞Ï°¥ Î©îÏù∏ Ïù¥ÎØ∏ÏßÄ Í≤ΩÎ°ú
+        String oldMainImage = existingRecipe.getRecipeMainImage();
+        // ÏÉàÎ°úÏö¥ ÌååÏùºÏùÑ ÏóÖÎ°úÎìúÌïòÏó¨ Í≤ΩÎ°ú ÏÉùÏÑ±
+        String newMainImagePath = (mainImage != null && !mainImage.isEmpty())
+        		? fileUpload.saveImage(mainImage, formData.get("recipeName"), null)
+        		: oldMainImage; // ÏÉàÎ°úÏö¥ Ïù¥ÎØ∏ÏßÄÍ∞Ä ÏóÜÏúºÎ©¥ Í∏∞Ï°¥ Í≤ΩÎ°ú Ïú†ÏßÄ
+
+        // ÏÉàÎ°úÏö¥ ÌååÏùºÏù¥ Ï°¥Ïû¨ÌïòÍ≥† Í∏∞Ï°¥ ÌååÏùºÏù¥ Ï°¥Ïû¨ÌïòÎ©¥ Í∏∞Ï°¥ ÌååÏùº ÏÇ≠Ï†ú
+        if (mainImage != null && !mainImage.isEmpty() && oldMainImage != null && !oldMainImage.isEmpty()) {
+        	fileDelete.deleteFile(oldMainImage); // Í∏∞Ï°¥ ÌååÏùº ÏÇ≠Ï†ú
+        }
+    	
+     // RecipeVOÎ•º ÏÉàÎ°≠Í≤å ÏÉùÏÑ±
+        RecipeVO updatedRecipe = buildRecipeVO(formData, mainImage);
+        updatedRecipe.setRecipeCD(recipeCD);
+        updatedRecipe.setRecipeMainImage(newMainImagePath); // ÏÉà Í≤ΩÎ°ú ÏÑ§Ï†ï
+
+        return recipeMapper.updateRecipe(updatedRecipe) > 0;
+    }
+
+    // 2-2. Recipe ÏÑ∏Î∂Ä Ï†ïÎ≥¥ update
+    private boolean updateRecipeDetails(int recipeCD, 
+    									List<Map<String, String>> ingredients, 
+    									List<Map<String, String>> steps,
+                                        List<Map<String, String>> tips, 
+                                        List<MultipartFile> stepImages, 
+                                        String recipeName) {
+        
+        return ingredientService.updateIngredientsByRecipe(recipeCD, ingredients) &&
+               recipeStepService.updateRecipeSteps(recipeCD, steps, stepImages, recipeName) &&
+               tipService.updateTipsByRecipe(recipeCD, tips);
+    }
+
+    // 3. Recipe Select
+    @Override
+    public RecipeDetailDTO getRecipeByCD(int recipeCD) {
+        return recipeMapper.selectRecipeDetailByCD(recipeCD)
+                .orElseThrow(() -> new RuntimeException("Recipe not found for ID: " + recipeCD));
+    }
+
+    // 4. Recipe Delete
+    @Transactional
+    @Override
+    public boolean deleteRecipeByCD(int recipeCD) {
+        RecipeDetailDTO recipeDetail = getRecipeByCD(recipeCD);
+        fileDelete.deleteFile(recipeDetail.getRecipeMainImage());
+    	
+    	if (!deleteRecipeDetails(recipeCD)) {
+            log.error("Failed to delete recipe details for Recipe ID: {}", recipeCD);
+            return false;
+        }
+    	
+        boolean isRecipeDeleted = recipeMapper.deleteRecipeByCD(recipeCD) > 0;
+        if (!isRecipeDeleted) {
+            log.error("Failed to delete main recipe for Recipe ID: {}", recipeCD);
+        }
+        
+        return isRecipeDeleted;
+    }
+    
+    //4-1 Recip ÏÑ∏Î∂Ä Ï†ïÎ≥¥ ÏÇ≠„Öà[ Ïû¨Î£å, Ï°∞Î¶¨, ÌåÅ]
+    private boolean deleteRecipeDetails(int recipeCD) {
+        boolean areIngredientsDeleted = ingredientTypeService.deleteIngredientTypesByRecipeCD(recipeCD);
+        boolean areStepsDeleted = recipeStepService.deleteStepsByRecipeCD(recipeCD);
+        boolean areTipsDeleted = tipService.deleteTipsByRecipeCD(recipeCD);
+
+        // ÏÑ∏Î∂Ä Ï†ïÎ≥¥ ÏÇ≠Ï†úÍ∞Ä Î™®Îëê ÏÑ±Í≥µÌñàÎäîÏßÄ ÌôïÏù∏
+        if (!areIngredientsDeleted || !areStepsDeleted || !areTipsDeleted) {
+            log.error("Failed to delete one or more recipe details for Recipe ID: {}. Ingredients deleted: {}, Steps deleted: {}, Tips deleted: {}",
+                      recipeCD, areIngredientsDeleted, areStepsDeleted, areTipsDeleted);
+            return false;
         }
 
-        return recipeDetail;
+        return true;
     }
+
+
 }

@@ -17,10 +17,11 @@ spring:
       - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
   profiles:
     active: local
-    
+   
 file:
-  upload-dir: "c:/biteNest/uploads"
-  
+  upload-dir: C:/uploadfiles/
+   
+   
 server:
   port: 80
   servlet:
@@ -37,5 +38,6 @@ mybatis:
     jdbc-type-for-null: NULL
   type-aliases-package:
     com.bn.biteNest.recipe.model.vo,
-    com.bn.biteNest.recipe.model.dto
+    com.bn.biteNest.recipe.model.dto,
+    com.bn.biteNest.recipeComment.model.vo
   mapper-locations: classpath:mapper/*.xml

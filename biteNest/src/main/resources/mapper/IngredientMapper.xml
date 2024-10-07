@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.bn.biteNest.recipe.model.dao.IngredientMapper">
-
+	
     <select id="selectByName" parameterType="string" resultType="com.bn.biteNest.recipe.model.vo.IngredientVO">
         SELECT 
         		INGREDIENT_CD,
@@ -15,6 +15,24 @@
      	 		INGREDIENT_NM = #{ingredientName}
     </select>
 
+	 <!-- MERGE 구문을 사용하여 중복된 재료 처리 -->
+    <insert id="mergeIngredient" parameterType="com.bn.biteNest.recipe.model.vo.IngredientVO">
+	    MERGE INTO RECIPE_INGREDIENT_TB tgt
+	    USING (
+	        SELECT #{ingredientNM} AS INGREDIENT_NM FROM DUAL
+	    ) src
+	    ON (tgt.INGREDIENT_NM = src.INGREDIENT_NM)
+	    WHEN NOT MATCHED THEN
+	        INSERT (INGREDIENT_CD, INGREDIENT_NM)
+	        VALUES (INGREDIENT_SEQ.NEXTVAL, src.INGREDIENT_NM)
+	        
+	        <selectKey keyProperty="ingredientCD" resultType="java.lang.Integer" order="AFTER">
+	    SELECT ingredient_cd FROM RECIPE_INGREDIENT_TB WHERE ingredient_nm = #{ingredientNM}
+	</selectKey>
+	</insert>
+
+	
+<!-- 
     <insert id="insertIngredient" parameterType="com.bn.biteNest.recipe.model.vo.IngredientVO" useGeneratedKeys="true" keyProperty="ingredientCD">
         <selectKey keyProperty="ingredientCD" order="BEFORE" resultType="int">
             SELECT 
@@ -35,4 +53,42 @@
          		 #{ingredientNM}
          		 )
     </insert> 
+    
+ -->    
+     <!-- 특정 레시피의 모든 재료 삭제 -->
+    <delete id="deleteIngredientsByRecipeCD" parameterType="int">
+        DELETE 
+          FROM 
+          		RECIPE_INGREDIENT_TB
+         WHERE 
+         		INGREDIENT_CD IN (
+				            	  SELECT 
+				            	  		  INGREDIENT_CD
+				            		FROM 
+				            		  	  RECIPE_INGREDIENT_TYPE_TB
+				            	   WHERE 
+				            		 	  RECIPE_CD = #{recipeCD}
+        						 )
+    </delete>
+
+    <!-- 특정 재료 ID로 재료 삭제 -->
+    <delete id="deleteIngredientByCD" parameterType="int">
+        DELETE 
+          FROM 
+          		RECIPE_INGREDIENT_TB
+         WHERE 
+        		INGREDIENT_CD = #{ingredientCD}
+    </delete>
+
+    <!-- 특정 레시피와 연관된 재료 개수 조회 -->
+    <select id="countRecipesUsingIngredient" parameterType="map" resultType="int">
+        SELECT 
+            	COUNT(*) 
+          FROM 
+          		RECIPE_INGREDIENT_TYPE_TB 
+         WHERE 
+           		INGREDIENT_CD = #{ingredientCD} 
+            AND 
+            	RECIPE_CD != #{recipeCD}
+    </select>
 </mapper>

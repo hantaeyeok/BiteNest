@@ -26,4 +26,65 @@
         		 )
     </insert>
     
+     <!-- 특정 레시피의 재료 타입 조회 -->
+    <select id="selectIngredientsByRecipeCD" resultType="com.bn.biteNest.recipe.model.vo.IngredientTypeVO">
+        SELECT 
+	            RECIPE_CD AS recipeCD,
+	            INGREDIENT_CD AS ingredientCD,
+	            INGREDIENT_AMT AS ingredientAmt,
+	            INGREDIENT_TYPE AS ingredientType
+          FROM 
+           		RECIPE_INGREDIENT_TYPE_TB
+         WHERE 
+           		RECIPE_CD = #{recipeCD}
+    </select>
+    
+       <!-- 특정 레시피와 재료의 타입 조회 -->
+    <select id="selectIngredientTypeByRecipeAndIngredient" resultType="com.bn.biteNest.recipe.model.vo.IngredientTypeVO">
+        SELECT 
+	            RECIPE_CD AS recipeCD,
+	            INGREDIENT_CD AS ingredientCD,
+	            INGREDIENT_AMT AS ingredientAmt,
+	            INGREDIENT_TYPE AS ingredientType
+          FROM 
+            	RECIPE_INGREDIENT_TYPE_TB
+         WHERE 
+	            RECIPE_CD = #{recipeCD}     
+           AND 
+           		INGREDIENT_CD = #{ingredientCD}
+    </select>
+    
+      <!-- 재료 타입 업데이트 -->
+    <update id="updateIngredientType" parameterType="com.bn.biteNest.recipe.model.vo.IngredientTypeVO">
+        UPDATE 
+        		RECIPE_INGREDIENT_TYPE_TB
+           SET 
+           		INGREDIENT_AMT = #{ingredientAmt}, 
+            	INGREDIENT_TYPE = #{ingredientType}
+         WHERE 
+            	RECIPE_CD = #{recipeCD} 
+           AND 
+           		INGREDIENT_CD = #{ingredientCD}
+    </update>
+
+    <!-- 특정 레시피의 재료 타입 삭제 -->
+    <delete id="deleteIngredientTypesByRecipeCD" parameterType="int">
+        DELETE 
+          FROM 
+          		RECIPE_INGREDIENT_TYPE_TB
+         WHERE 
+         		RECIPE_CD = #{recipeCD}
+    </delete>
+    
+    <!-- 특정 레시피의 특정 재료 타입 삭제 -->
+    <delete id="deleteIngredientTypeByRecipeCDAndIngredientCD" parameterType="map">
+        DELETE 
+          FROM 
+          		RECIPE_INGREDIENT_TYPE_TB 
+         WHERE 
+            	RECIPE_CD = #{recipeCD} 
+           AND 
+           		INGREDIENT_CD = #{ingredientCD}
+    </delete>
+    
 </mapper>

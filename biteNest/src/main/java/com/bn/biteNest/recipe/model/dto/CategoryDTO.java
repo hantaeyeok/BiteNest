@@ -1,7 +1,5 @@
 package com.bn.biteNest.recipe.model.dto;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +14,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 public class CategoryDTO {
-    private String category1Name;
-    private String category2Name;
+    private String category1NM;
+    private String category2NM;
 }

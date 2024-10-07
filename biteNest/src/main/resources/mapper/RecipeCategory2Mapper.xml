@@ -4,16 +4,22 @@
 
     <!-- 카테고리 2 이름으로 ID 조회 -->
     <select id="selectCategory2CDByName" parameterType="String" resultType="Integer">
-        SELECT CATEGORY2_CD
-        FROM RECIPE_CATEGORY2_TB
-        WHERE CATEGORY2_NAME = #{category2Name}
+        SELECT 
+        		CATEGORY2_CD
+          FROM 
+        		RECIPE_CATEGORY2_TB
+         WHERE
+         		CATEGORY2_NM = #{category2NM}
     </select>
 
     <!-- 카테고리 2 ID로 이름 조회 -->
-    <select id="selectCategory2NameById" parameterType="int" resultType="String">
-        SELECT CATEGORY2_NM
-        FROM RECIPE_CATEGORY2_TB
-        WHERE CATEGORY2_CD = #{category2CD}
+    <select id="selectCategory2NameByCD" parameterType="int" resultType="String">
+        SELECT 
+        		CATEGORY2_NM
+          FROM 
+          		RECIPE_CATEGORY2_TB
+         WHERE 
+         		CATEGORY2_CD = #{category2CD}
     </select>
 
 </mapper>

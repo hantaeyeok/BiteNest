@@ -4,6 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.bn.biteNest.recipe.model.dao.RecipeMapper">
+    
     <insert id="insertRecipe" parameterType="com.bn.biteNest.recipe.model.vo.RecipeVO" useGeneratedKeys="true" keyProperty="recipeCD">		
 		<selectKey resultType="int" keyProperty="recipeCD" order="BEFORE">
 			SELECT
@@ -38,50 +39,50 @@
 	</insert>
 
     <!-- Recipe 상세 조회 쿼리 -->
-    <select id="selectRecipeDetailById" parameterType="int" resultMap="RecipeDetailMap">
+    <select id="selectRecipeDetailByCD" parameterType="int" resultMap="RecipeDetailMap">
         SELECT 
-            r.RECIPE_CD AS recipeCD,
-            r.RECIPE_NM AS recipeNM,
-            r.RECIPE_DESCRIPTION AS recipeDescription,
-            r.ESTIMATED_TIME AS estimatedTime,
-            r.COOKING_SERVINGS AS cookingServings,
-            r.RECIPE_MAIN_IMAGE AS recipeMainImage,
-
-            -- 카테고리 이름 정보
-            c1.CATEGORY1_NAME AS category1Name,
-            c2.CATEGORY2_NAME AS category2Name,
-
-            -- 재료 정보
-            i.INGREDIENT_CD AS ingredients_ingredientCD,
-            i.INGREDIENT_NM AS ingredients_ingredientNM,
-            it.INGREDIENT_AMT AS ingredients_ingredientAmt,
-            it.INGREDIENT_TYPE AS ingredients_ingredientType,
-
-            -- 조리 단계 정보
-            s.STEP_CD AS steps_stepCD,
-            s.STEP_ORD AS steps_stepORD,
-            s.INSTRUCTION AS steps_instruction,
-            s.IMAGE_URL AS steps_imageURL,
-
-            -- 팁 정보
-            t.TIP_CD AS tips_tipCD,
-            t.TIP_CONTENT AS tips_tipContent,
-            t.TIP_ORD AS tips_tipORD
+	            r.RECIPE_CD AS recipeCD,
+	            r.RECIPE_NM AS recipeNM,
+	            r.RECIPE_DESCRIPTION AS recipeDescription,
+	            r.ESTIMATED_TIME AS estimatedTime,
+	            r.COOKING_SERVINGS AS cookingServings,
+	            r.RECIPE_MAIN_IMAGE AS recipeMainImage,
+	
+	            -- 카테고리 이름 정보
+	            c1.CATEGORY1_NM AS category1NM,
+	            c2.CATEGORY2_NM AS category2NM,
+	
+	            -- 재료 정보
+	            i.INGREDIENT_CD AS ingredients_ingredientCD,
+	            i.INGREDIENT_NM AS ingredients_ingredientNM,
+	            it.INGREDIENT_AMT AS ingredients_ingredientAmt,
+	            it.INGREDIENT_TYPE AS ingredients_ingredientType,
+	
+	            -- 조리 단계 정보
+	            s.STEP_CD AS steps_stepCD,
+	            s.STEP_ORD AS steps_stepORD,
+	            s.INSTRUCTION AS steps_instruction,
+	            s.IMAGE_URL AS steps_imageURL,
+	
+	            -- 팁 정보
+	            t.TIP_CD AS tips_tipCD,
+	            t.TIP_CONTENT AS tips_tipContent,
+	            t.TIP_ORD AS tips_tipORD
 
         FROM 
-            RECIPE_TB r
-            LEFT JOIN RECIPE_CATEGORY1_TB c1 ON r.CATEGORY1_CD = c1.CATEGORY1_CD
-            LEFT JOIN RECIPE_CATEGORY2_TB c2 ON r.CATEGORY2_CD = c2.CATEGORY2_CD
-            LEFT JOIN RECIPE_INGREDIENT_TYPE_TB it ON r.RECIPE_CD = it.RECIPE_CD
-            LEFT JOIN RECIPE_INGREDIENT_TB i ON it.INGREDIENT_CD = i.INGREDIENT_CD
-            LEFT JOIN RECIPE_STEP_TB s ON r.RECIPE_CD = s.RECIPE_CD
-            LEFT JOIN TIP_TB t ON r.RECIPE_CD = t.RECIPE_CD
+	            RECIPE_TB r
+	            LEFT JOIN RECIPE_CATEGORY1_TB c1 ON r.CATEGORY1_CD = c1.CATEGORY1_CD
+	            LEFT JOIN RECIPE_CATEGORY2_TB c2 ON r.CATEGORY2_CD = c2.CATEGORY2_CD
+	            LEFT JOIN RECIPE_INGREDIENT_TYPE_TB it ON r.RECIPE_CD = it.RECIPE_CD
+	            LEFT JOIN RECIPE_INGREDIENT_TB i ON it.INGREDIENT_CD = i.INGREDIENT_CD
+	            LEFT JOIN RECIPE_STEP_TB s ON r.RECIPE_CD = s.RECIPE_CD
+	            LEFT JOIN TIP_TB t ON r.RECIPE_CD = t.RECIPE_CD
 
         WHERE 
-            r.RECIPE_CD = #{recipeCD}
+           		r.RECIPE_CD = #{recipeCD}
 
         ORDER BY 
-            s.STEP_ORD, t.TIP_ORD
+            	s.STEP_ORD, t.TIP_ORD
     </select>
 
     <!-- Result Map 정의 -->
@@ -96,8 +97,8 @@
         
         <!-- 카테고리 정보 매핑 -->
         <association property="category" javaType="com.bn.biteNest.recipe.model.dto.CategoryDTO">
-            <result property="category1Name" column="category1Name"/>
-            <result property="category2Name" column="category2Name"/>
+            <result property="category1NM" column="category1NM"/>
+            <result property="category2NM" column="category2NM"/>
         </association>
 
         <!-- 재료 목록 매핑 -->
@@ -123,5 +124,31 @@
             <result property="tipORD" column="tips_tipORD"/>
         </collection>
     </resultMap>
+
+    <!-- 레시피 기본 정보 업데이트 -->
+    <update id="updateRecipe" parameterType="com.bn.biteNest.recipe.model.vo.RecipeVO">
+        UPDATE 
+        		RECIPE_TB
+           SET 
+	            RECIPE_NM = #{recipeNM},
+	            RECIPE_DESCRIPTION = #{recipeDescription},
+	            ESTIMATED_TIME = #{estimatedTime},
+	            COOKING_SERVINGS = #{cookingServings},
+	            RECIPE_MAIN_IMAGE = #{recipeMainImage, jdbcType=VARCHAR},
+	            CATEGORY1_CD = #{category1CD},
+	            CATEGORY2_CD = #{category2CD}
+         WHERE 
+            	RECIPE_CD = #{recipeCD}
+    </update>
+    
+    <!-- 레시피 삭제 -->
+    <delete id="deleteRecipeByCD" parameterType="int">
+        DELETE 
+          FROM 
+          		RECIPE_TB
+         WHERE 
+         		RECIPE_CD = #{recipeCD}
+    </delete>
+    
 </mapper>
 

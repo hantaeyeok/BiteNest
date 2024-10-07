@@ -3,17 +3,23 @@
 <mapper namespace="com.bn.biteNest.recipe.model.dao.RecipeCategory1Mapper">
 
     <!-- 카테고리 1 이름으로 ID 조회 -->
-    <select id="selectCategory1IdByName" parameterType="String" resultType="Integer">
-        SELECT CATEGORY1_CD
-        FROM RECIPE_CATEGORY1_TB
-        WHERE CATEGORY1_NAME = #{category1Name}
+    <select id="selectCategory1CDByName" parameterType="String" resultType="Integer">
+        SELECT 
+        		CATEGORY1_CD
+          FROM 
+          		RECIPE_CATEGORY1_TB
+         WHERE 
+         		CATEGORY1_NM = #{category1NM}
     </select>
 
     <!-- 카테고리 1 ID로 이름 조회 -->
-    <select id="selectCategory1NameById" parameterType="int" resultType="String">
-        SELECT CATEGORY1_NM
-        FROM RECIPE_CATEGORY1_TB
-        WHERE CATEGORY1_CD = #{category1CD}
+    <select id="selectCategory1NameByCD" parameterType="int" resultType="String">
+        SELECT 
+        		CATEGORY1_NM
+          FROM 
+          		RECIPE_CATEGORY1_TB
+         WHERE 
+         		CATEGORY1_CD = #{category1CD}
     </select>
 
 </mapper>

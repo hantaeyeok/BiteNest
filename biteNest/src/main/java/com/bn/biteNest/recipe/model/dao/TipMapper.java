@@ -10,5 +10,7 @@ import com.bn.biteNest.recipe.model.vo.TipVO;
 public interface TipMapper {
 
 	int insertTip(TipVO tip);
-
+	int updateTip(TipVO tipVO);
+	List<TipVO> selectTipsByRecipeId(int recipeCD);
+	int deleteTipsByRecipeCD(int recipeCD);
 }

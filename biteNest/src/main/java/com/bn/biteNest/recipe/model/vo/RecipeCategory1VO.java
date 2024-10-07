@@ -14,6 +14,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 public class RecipeCategory1VO {
-    private int category1CD;   // 1차 카테고리 기본키
-    private String category1Name; // 1차 카테고리 이름
+    private int category1CD;   
+    private String category1NM;
 }

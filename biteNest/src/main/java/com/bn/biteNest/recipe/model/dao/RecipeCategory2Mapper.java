@@ -5,6 +5,6 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface RecipeCategory2Mapper {
-    Integer selectCategory2CDByName(String category2Name);
-    String selectCategory2NameById(int category2CD);
+    Integer selectCategory2CDByName(String category2NM);
+    String selectCategory2NameByCD(int category2CD);
 }
