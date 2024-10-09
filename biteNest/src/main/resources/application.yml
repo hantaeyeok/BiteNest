@@ -37,6 +37,9 @@ mybatis:
   configuration:
     jdbc-type-for-null: NULL
   type-aliases-package:
+    com.bn.biteNest.user.model.vo, 
+    com.bn.biteNest.profile.model.vo, 
+    com.bn.biteNest.password.model.vo,
     com.bn.biteNest.recipe.model.vo,
     com.bn.biteNest.recipe.model.dto,
     com.bn.biteNest.recipeComment.model.vo
