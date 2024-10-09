@@ -141,3 +141,5 @@ sqldeveloper/
 
 node_modules
 yarn-error.log
+
+gradle.properties
