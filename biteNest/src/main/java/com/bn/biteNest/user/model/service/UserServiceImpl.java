@@ -10,7 +10,6 @@ import com.bn.biteNest.password.model.service.PasswordService;
 import com.bn.biteNest.password.model.vo.Password;
 import com.bn.biteNest.profile.model.dao.ProfileRepository;
 import com.bn.biteNest.profile.model.vo.Profile;
-import com.bn.biteNest.user.model.dao.UserMapper;
 import com.bn.biteNest.user.model.dao.UserRepository;
 import com.bn.biteNest.user.model.vo.Signup;
 import com.bn.biteNest.user.model.vo.User;
@@ -21,11 +20,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-	private final UserMapper userMapper;
 	private final UserRepository userRepository;
-	
 	private final ProfileRepository profileRepository;
-	
 	private final PasswordService passwordService;
 	
 	@Override

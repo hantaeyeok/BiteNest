@@ -17,10 +17,8 @@ import com.bn.biteNest.profile.model.vo.Profile;
 import com.bn.biteNest.response.model.vo.ResponseData;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@Slf4j
 @RequestMapping("/profile")
 @RequiredArgsConstructor
 public class ProfileController {

@@ -19,10 +19,9 @@ import com.bn.biteNest.user.model.vo.Signup;
 import com.bn.biteNest.user.model.vo.User;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 
 @RestController
-@Slf4j
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
