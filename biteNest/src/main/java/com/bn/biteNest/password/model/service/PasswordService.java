@@ -6,7 +6,7 @@ import com.bn.biteNest.password.model.vo.Password;
 
 public interface PasswordService {
 
-	Password createPassword(Password password);
+	Password savePassword(Password password);
 
 	Optional<Password> findByUserNo(int userNo);
 

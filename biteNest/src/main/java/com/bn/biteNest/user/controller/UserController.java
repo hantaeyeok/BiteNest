@@ -15,10 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bn.biteNest.response.model.vo.ResponseData;
 import com.bn.biteNest.user.model.service.UserService;
+import com.bn.biteNest.user.model.vo.Signup;
 import com.bn.biteNest.user.model.vo.User;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,22 +31,14 @@ public class UserController {
 
 	//JPA
 	// 회원 가입
-	@PostMapping
-	public ResponseEntity<ResponseData> save(@RequestBody String data) throws JsonMappingException, JsonProcessingException {
+	@PostMapping("/signup")
+	public ResponseEntity<User> signup(@RequestBody Signup signup) {
 		
-		log.info("Postman을 통해 받은 요청시 전달 값 : {} ", data);
+		User user = userService.regist(signup);
 		
-		User user = new ObjectMapper().readValue(data, User.class);
-		
-		log.info("VO형태로 가공 : {} ", user);
-		
-		User savedObj = userService.save(user);
-		
-		log.info("반환 받은 User : {} ", savedObj);
-		
-		return null;
-		
+		return ResponseEntity.ok(user);
 	}
+	
 	
 	// 모든 사용자 조회
 	@GetMapping
@@ -96,7 +86,7 @@ public class UserController {
 								               .loginType(userDetail.getLoginType())
 								               .build();
 
-	        return ResponseEntity.ok(userService.save(updatedUser));
+	        return ResponseEntity.ok(userService.update(updatedUser));
 	    } else {
 			return ResponseEntity.notFound()
 										  .build();

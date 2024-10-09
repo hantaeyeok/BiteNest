@@ -21,7 +21,7 @@ public class PasswordServiceImpl implements PasswordService {
 	
 	// 비밀번호 생성
 	@Override
-	public Password createPassword(Password password) {
+	public Password savePassword(Password password) {
 		
 		password.setPassword(passwordEncoder.encode(password.getPassword()));
 		password.setUpdateDate(LocalDateTime.now());

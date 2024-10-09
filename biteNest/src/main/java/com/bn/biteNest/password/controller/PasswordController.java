@@ -28,7 +28,7 @@ public class PasswordController {
 	// 비밀번호 생성
 	@PostMapping("/create")
 	public ResponseEntity<Password> createPassword(@RequestBody Password password) {
-		Password createdPassword = passwordService.createPassword(password);
+		Password createdPassword = passwordService.savePassword(password);
 		
 		return ResponseEntity.ok(createdPassword);
 	}
