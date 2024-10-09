@@ -2,7 +2,7 @@ import { useState } from 'react'
 import FridgePage from './Fridge'
 import MyRecipePage from './MyRecipe'
 import CookingDiaryPage from './CookingDiary'
-import TabMenu from '@components/fridge/shared/TabMenu'
+import TabMenu from '@/components/fridge/shared/TabMenu'
 import AddBanner from '@/components/fridge/shared/AddBanner'
 import useUser from '@hooks/auth/useUser'
 

@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
 	
@@ -32,10 +32,10 @@ public class UserController {
 	// 회원 가입
 	@PostMapping("/signup")
 	public ResponseEntity<User> signup(@RequestBody Signup signup) {
-		
-		User user = userService.regist(signup);
-		
-		return ResponseEntity.ok(user);
+	    System.out.println("회원가입 요청 들어옴: " + signup);
+	    User user = userService.regist(signup);
+	    System.out.println("회원가입 처리 완료: " + user);
+	    return ResponseEntity.ok(user);
 	}
 	
 	

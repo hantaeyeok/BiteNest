@@ -10,8 +10,8 @@ import { 약관목록 } from '@constants/apply'
 function validate(formValues: FormValues) {
   let errors: Partial<FormValues> = {}
 
-  if (validator.isEmail(formValues.email) === false) {
-    errors.email = '이메일형식을 확인해주세요'
+  if (validator.isEmail(formValues.userId) === false) {
+    errors.userId = '이메일형식을 확인해주세요'
   }
 
   if (formValues.password.length < 8) {
@@ -29,19 +29,22 @@ function validate(formValues: FormValues) {
   if (formValues.name.length < 2) {
     errors.name = '이름은 2글자 이상 입력해주세요'
   }
-  if (formValues.nickName.length < 2) {
-    errors.nickName = '닉네임은 2글자 이상 입력해주세요'
+  if (formValues.nickname.length < 2) {
+    errors.nickname = '닉네임은 2글자 이상 입력해주세요'
   }
   return errors
 }
 
 function Form({ onSubmit }: { onSubmit: (formValues: FormValues) => void }) {
   const [formValues, setFormValues] = useState<FormValues>({
-    email: '',
+    userId: '',
     password: '',
     rePassword: '',
     name: '',
-    nickName: '',
+    nickname: '',
+    imageUrl: '',
+    introduction: '',
+    loginType: '1',
   })
 
   const [dirty, setDirty] = useState<Partial<FormValues>>({})
@@ -95,12 +98,12 @@ function Form({ onSubmit }: { onSubmit: (formValues: FormValues) => void }) {
       <p className="text-2xl my-6">회원가입</p>
       <TextField
         label="이메일"
-        name="email"
+        name="userId"
         placeholder="prumpy11@naver.com"
-        value={formValues.email}
+        value={formValues.userId}
         onChange={handleFormValues}
-        hasError={Boolean(dirty.email) && Boolean(errors.email)}
-        helpMessage={Boolean(dirty.email) ? errors.email : ''}
+        hasError={Boolean(dirty.userId) && Boolean(errors.userId)}
+        helpMessage={Boolean(dirty.userId) ? errors.userId : ''}
         onBlur={handleBlur}
       />
       <div className="my-6"></div>
@@ -140,12 +143,12 @@ function Form({ onSubmit }: { onSubmit: (formValues: FormValues) => void }) {
       <div className="my-6"></div>
       <TextField
         label="닉네임"
-        name="nickName"
+        name="nickname"
         placeholder="캬라멜"
-        value={formValues.nickName}
+        value={formValues.nickname}
         onChange={handleFormValues}
-        hasError={Boolean(dirty.nickName) && Boolean(errors.nickName)}
-        helpMessage={Boolean(dirty.nickName) ? errors.nickName : ''}
+        hasError={Boolean(dirty.nickname) && Boolean(errors.nickname)}
+        helpMessage={Boolean(dirty.nickname) ? errors.nickname : ''}
         onBlur={handleBlur}
       />
       <div className="my-6"></div>
