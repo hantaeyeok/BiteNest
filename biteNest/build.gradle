@@ -24,12 +24,16 @@ configurations {
 }
 
 dependencies {
+	
     // Spring Boot 기본 및 추가 라이브러리
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+    
+    // Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'  
     
     // Lombok 및 Jackson
     compileOnly 'org.projectlombok:lombok'
@@ -48,6 +52,7 @@ dependencies {
     // 테스트 의존성
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('bootJar') {
