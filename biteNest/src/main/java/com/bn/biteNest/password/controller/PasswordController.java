@@ -15,10 +15,9 @@ import com.bn.biteNest.password.model.service.PasswordService;
 import com.bn.biteNest.password.model.vo.Password;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 
 @RestController
-@Slf4j
 @RequestMapping("/password")
 @RequiredArgsConstructor
 public class PasswordController {
