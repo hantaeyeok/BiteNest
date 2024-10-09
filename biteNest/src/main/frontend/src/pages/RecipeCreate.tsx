@@ -3,26 +3,30 @@ import instance from '@util/axios'
 import { isAxiosError } from 'axios'
 
 function RecipeCreatePage() {
-  const handleSubmit = async (formData: FormData) => {
-    // FormData의 내용을 출력하는 부분 (디버깅용)
-    formData.forEach((value, key) => {
-      console.log(key, value)
-    })
-
+  const handleSubmit = async () => {
     try {
-      // 서버에서 기대하는 "multipart/form-data" 형식으로 전송
-      const response = await instance.post('/recipes/create', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      const response = await instance.post(
+        'http://localhost:80/api/recipes/create',
+        {
+          title: 'New Recipe',
+          description: 'This is a new recipe',
         },
-      })
-      console.log('응답 데이터:', response.data)
-    } catch (error) {
-      if (isAxiosError(error)) {
-        console.error('Axios 오류 발생:', error.response?.data)
+      )
+      console.log(response.data)
+    } catch (error: any) {
+      if (error.response) {
+        // 서버 응답이 있었지만 상태 코드가 2xx 범위를 벗어났을 때
+        console.error('서버 응답 오류:', error.response.data)
+        console.error('상태 코드:', error.response.status)
+        console.error('헤더:', error.response.headers)
+      } else if (error.request) {
+        // 요청이 전송되었으나 응답이 없을 때
+        console.error('요청이 전송되었으나 응답이 없음:', error.request)
       } else {
-        console.error('오류 발생:', error)
+        // 요청을 설정하는 도중 오류가 발생했을 때
+        console.error('Axios 설정 오류:', error.message)
       }
+      console.error('전체 오류 객체:', error)
     }
   }
 

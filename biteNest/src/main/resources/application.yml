@@ -17,11 +17,10 @@ spring:
       - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
   profiles:
     active: local
-   
+
 file:
   upload-dir: C:/uploadfiles/
-   
-   
+
 server:
   port: 80
   servlet:
@@ -30,16 +29,12 @@ server:
       enabled: true
       force: true
     session:
-      timeout:
-  
-  
+      timeout: # 빈 값으로 두어 기본 설정 사용, 또는 필요하다면 명시적으로 값을 설정 (예: 30m)
+
 mybatis:
   configuration:
     jdbc-type-for-null: NULL
-  type-aliases-package:
-    com.bn.biteNest.user.model.vo, 
-    com.bn.biteNest.profile.model.vo, 
-    com.bn.biteNest.password.model.vo,
+  type-aliases-package: 
     com.bn.biteNest.recipe.model.vo,
     com.bn.biteNest.recipe.model.dto,
     com.bn.biteNest.recipeComment.model.vo
