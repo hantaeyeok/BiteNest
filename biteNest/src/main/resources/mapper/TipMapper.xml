@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bn.biteNest.recipe.model.dao.TipMapper">
+
+    <insert id="insertTip" parameterType="com.bn.biteNest.recipe.model.vo.TipVO">
+        INSERT 
+          INTO 
+          		TIP_TB 
+          		(
+          		 TIP_CD,
+          		 RECIPE_CD, 
+          		 TIP_CONTENT, 
+          		 TIP_ORD
+          		 )
+        VALUES 
+         		(
+         		 TIP_SEQ.NEXTVAL,
+         		 #{recipeCD}, 
+         		 #{tipContent}, 
+         		 #{tipORD}
+         		 )
+    </insert>
+    
+   <!-- 특정 레시피의 팁 목록 조회 -->
+    <select id="selectTipsByRecipeId" resultType="com.bn.biteNest.recipe.model.vo.TipVO">
+        SELECT 
+	            TIP_CD AS tipCD,
+	            RECIPE_CD AS recipeCD,
+	            TIP_CONTENT AS tipContent,
+	            TIP_ORD AS tipORD
+          FROM 
+            	TIP_TB
+         WHERE 
+            	RECIPE_CD = #{recipeCD}
+         ORDER 
+            BY 
+            	TIP_ORD
+    </select>
+     <!-- 팁 업데이트 -->
+    <update id="updateTip" parameterType="com.bn.biteNest.recipe.model.vo.TipVO">
+        UPDATE 
+        		TIP_TB
+           SET 
+           		TIP_CONTENT = #{tipContent}
+         WHERE 
+            	RECIPE_CD = #{recipeCD} 
+           AND 
+           		TIP_ORD = #{tipORD}
+    </update>
+
+    <!-- 특정 레시피의 모든 팁 삭제 -->
+    <delete id="deleteTipsByRecipeCD" parameterType="int">
+        DELETE
+          FROM 
+          		TIP_TB
+         WHERE 
+         		RECIPE_CD = #{recipeCD}
+    </delete>
+
+    <!-- 특정 레시피의 특정 팁 삭제 -->
+    <delete id="deleteTipByRecipeCDAndTipORD" parameterType="map">
+        DELETE
+          FROM 
+          		TIP_TB
+         WHERE 
+         		RECIPE_CD = #{recipeCD} 
+           AND 
+           		TIP_ORD = #{tipORD}
+    </delete>
+    
+</mapper>

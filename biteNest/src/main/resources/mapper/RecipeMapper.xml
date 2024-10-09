@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bn.biteNest.recipe.model.dao.RecipeMapper">
+    
+    <insert id="insertRecipe" parameterType="com.bn.biteNest.recipe.model.vo.RecipeVO" useGeneratedKeys="true" keyProperty="recipeCD">		
+		<selectKey resultType="int" keyProperty="recipeCD" order="BEFORE">
+			SELECT
+					RECIPE_SEQ.NEXTVAL
+			  FROM
+					DUAL
+		</selectKey>
+		INSERT
+		  INTO
+				RECIPE_TB
+				(
+				 RECIPE_CD, 
+				 RECIPE_NM, 
+				 RECIPE_DESCRIPTION, 
+				 ESTIMATED_TIME, 
+				 COOKING_SERVINGS, 
+				 RECIPE_MAIN_IMAGE, 
+				 CATEGORY1_CD, 
+				 CATEGORY2_CD
+				)
+		VALUES 
+        		(
+        		 #{recipeCD}, 
+        		 #{recipeNM}, 
+        		 #{recipeDescription}, 
+        		 #{estimatedTime}, 
+        		 #{cookingServings}, 
+        		 #{recipeMainImage}, 
+        		 #{category1CD}, 
+        		 #{category2CD}
+				)
+	</insert>
+
+    <!-- Recipe 상세 조회 쿼리 -->
+    <select id="selectRecipeDetailByCD" parameterType="int" resultMap="RecipeDetailMap">
+        SELECT 
+	            r.RECIPE_CD AS recipeCD,
+	            r.RECIPE_NM AS recipeNM,
+	            r.RECIPE_DESCRIPTION AS recipeDescription,
+	            r.ESTIMATED_TIME AS estimatedTime,
+	            r.COOKING_SERVINGS AS cookingServings,
+	            r.RECIPE_MAIN_IMAGE AS recipeMainImage,
+	
+	            -- 카테고리 이름 정보
+	            c1.CATEGORY1_NM AS category1NM,
+	            c2.CATEGORY2_NM AS category2NM,
+	
+	            -- 재료 정보
+	            i.INGREDIENT_CD AS ingredients_ingredientCD,
+	            i.INGREDIENT_NM AS ingredients_ingredientNM,
+	            it.INGREDIENT_AMT AS ingredients_ingredientAmt,
+	            it.INGREDIENT_TYPE AS ingredients_ingredientType,
+	
+	            -- 조리 단계 정보
+	            s.STEP_CD AS steps_stepCD,
+	            s.STEP_ORD AS steps_stepORD,
+	            s.INSTRUCTION AS steps_instruction,
+	            s.IMAGE_URL AS steps_imageURL,
+	
+	            -- 팁 정보
+	            t.TIP_CD AS tips_tipCD,
+	            t.TIP_CONTENT AS tips_tipContent,
+	            t.TIP_ORD AS tips_tipORD
+
+        FROM 
+	            RECIPE_TB r
+	            LEFT JOIN RECIPE_CATEGORY1_TB c1 ON r.CATEGORY1_CD = c1.CATEGORY1_CD
+	            LEFT JOIN RECIPE_CATEGORY2_TB c2 ON r.CATEGORY2_CD = c2.CATEGORY2_CD
+	            LEFT JOIN RECIPE_INGREDIENT_TYPE_TB it ON r.RECIPE_CD = it.RECIPE_CD
+	            LEFT JOIN RECIPE_INGREDIENT_TB i ON it.INGREDIENT_CD = i.INGREDIENT_CD
+	            LEFT JOIN RECIPE_STEP_TB s ON r.RECIPE_CD = s.RECIPE_CD
+	            LEFT JOIN TIP_TB t ON r.RECIPE_CD = t.RECIPE_CD
+
+        WHERE 
+           		r.RECIPE_CD = #{recipeCD}
+
+        ORDER BY 
+            	s.STEP_ORD, t.TIP_ORD
+    </select>
+
+    <!-- Result Map 정의 -->
+    <resultMap id="RecipeDetailMap" type="com.bn.biteNest.recipe.model.dto.RecipeDetailDTO">
+        <!-- 레시피 기본 정보 매핑 -->
+        <id property="recipeCD" column="recipeCD"/>
+        <result property="recipeNM" column="recipeNM"/>
+        <result property="recipeDescription" column="recipeDescription"/>
+        <result property="estimatedTime" column="estimatedTime"/>
+        <result property="cookingServings" column="cookingServings"/>
+        <result property="recipeMainImage" column="recipeMainImage"/>
+        
+        <!-- 카테고리 정보 매핑 -->
+        <association property="category" javaType="com.bn.biteNest.recipe.model.dto.CategoryDTO">
+            <result property="category1NM" column="category1NM"/>
+            <result property="category2NM" column="category2NM"/>
+        </association>
+
+        <!-- 재료 목록 매핑 -->
+        <collection property="ingredients" ofType="com.bn.biteNest.recipe.model.dto.IngredientDTO">
+            <id property="ingredientCD" column="ingredients_ingredientCD"/>
+            <result property="ingredientNM" column="ingredients_ingredientNM"/>
+            <result property="ingredientAmt" column="ingredients_ingredientAmt"/>
+            <result property="ingredientType" column="ingredients_ingredientType"/>
+        </collection>
+
+        <!-- 조리 단계 목록 매핑 -->
+        <collection property="steps" ofType="com.bn.biteNest.recipe.model.dto.RecipeStepDTO">
+            <id property="stepCD" column="steps_stepCD"/>
+            <result property="stepORD" column="steps_stepORD"/>
+            <result property="instruction" column="steps_instruction"/>
+            <result property="imageURL" column="steps_imageURL"/>
+        </collection>
+
+        <!-- 팁 목록 매핑 -->
+        <collection property="tips" ofType="com.bn.biteNest.recipe.model.dto.TipDTO">
+            <id property="tipCD" column="tips_tipCD"/>
+            <result property="tipContent" column="tips_tipContent"/>
+            <result property="tipORD" column="tips_tipORD"/>
+        </collection>
+    </resultMap>
+
+    <!-- 레시피 기본 정보 업데이트 -->
+    <update id="updateRecipe" parameterType="com.bn.biteNest.recipe.model.vo.RecipeVO">
+        UPDATE 
+        		RECIPE_TB
+           SET 
+	            RECIPE_NM = #{recipeNM},
+	            RECIPE_DESCRIPTION = #{recipeDescription},
+	            ESTIMATED_TIME = #{estimatedTime},
+	            COOKING_SERVINGS = #{cookingServings},
+	            RECIPE_MAIN_IMAGE = #{recipeMainImage, jdbcType=VARCHAR},
+	            CATEGORY1_CD = #{category1CD},
+	            CATEGORY2_CD = #{category2CD}
+         WHERE 
+            	RECIPE_CD = #{recipeCD}
+    </update>
+    
+    <!-- 레시피 삭제 -->
+    <delete id="deleteRecipeByCD" parameterType="int">
+        DELETE 
+          FROM 
+          		RECIPE_TB
+         WHERE 
+         		RECIPE_CD = #{recipeCD}
+    </delete>
+    
+</mapper>
+

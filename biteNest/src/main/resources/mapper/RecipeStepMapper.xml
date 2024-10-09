@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bn.biteNest.recipe.model.dao.RecipeStepMapper">
+
+    <insert id="insertRecipeStep" parameterType="com.bn.biteNest.recipe.model.vo.RecipeStepVO">
+        INSERT 
+          INTO 
+          		RECIPE_STEP_TB 
+          		(
+          		 STEP_CD,
+          		 RECIPE_CD, 
+          		 STEP_ORD, 
+          		 INSTRUCTION, 
+          		 IMAGE_URL
+          		 )
+        VALUES 
+         		(
+         		 STEP_SEQ.NEXTVAL,
+         		 #{recipeCD}, 
+         		 #{stepORD}, 
+         		 #{instruction}, 
+         		 #{imageURL, jdbcType=VARCHAR}
+         		 )
+    </insert>
+    
+    
+   <!-- 특정 레시피의 조리 단계 조회 -->
+    <select id="selectRecipeStepByRecipeCD" resultType="com.bn.biteNest.recipe.model.vo.RecipeStepVO">
+        SELECT 
+	            STEP_CD AS stepCD,
+	            RECIPE_CD AS recipeCD,
+	            STEP_ORD AS stepORD,
+	            INSTRUCTION AS instruction,
+	            IMAGE_URL AS imageURL
+          FROM 
+           		RECIPE_STEP_TB
+         WHERE 
+            	RECIPE_CD = #{recipeCD}
+         ORDER 
+            BY 
+            	STEP_ORD
+    </select>
+
+	<update id="updateRecipeStep" parameterType="com.bn.biteNest.recipe.model.vo.RecipeStepVO">
+	    UPDATE 
+		   		RECIPE_STEP_TB
+	       SET 
+	    		instruction = #{instruction}, 
+	        	image_url = #{imageURL, jdbcType=VARCHAR}
+	     WHERE 
+	    		recipe_cd = #{recipeCD} 
+    	   AND 
+    	   		step_ord = #{stepORD}
+	</update>
+    
+    
+    <!-- 특정 레시피의 모든 조리 단계 삭제 -->
+    <delete id="deleteStepsByRecipeCD" parameterType="int">
+        DELETE 
+          FROM 
+          		RECIPE_STEP_TB
+         WHERE 
+         		RECIPE_CD = #{recipeCD}
+    </delete>
+    
+    <!-- 특정 레시피의 특정 조리 단계 삭제 -->
+    <delete id="deleteRecipeStepByRecipeCDAndStepORD" parameterType="map">
+        DELETE 
+          FROM 
+          		RECIPE_STEP_TB
+         WHERE 
+         		RECIPE_CD = #{recipeCD} 
+           AND 
+           		STEP_ORD = #{stepORD}
+    </delete>
+</mapper>
