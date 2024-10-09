@@ -52,4 +52,5 @@ dependencies {
 
 tasks.named('bootJar') {
     mainClass = 'com.bn.biteNest.BiteNestApplication' // mainClass 설정
+
 }

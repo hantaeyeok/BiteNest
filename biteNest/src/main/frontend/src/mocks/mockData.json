@@ -1,0 +1,9 @@
+{
+  "users": [
+    {
+      "email": "admin@naver.com",
+      "password": "admin123",
+      "token": "mocked-jwt-token"
+    }
+  ]
+}

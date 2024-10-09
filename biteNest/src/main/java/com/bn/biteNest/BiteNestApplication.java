@@ -13,3 +13,4 @@ public class BiteNestApplication {
         SpringApplication.run(BiteNestApplication.class, args);
     }
 }
+
