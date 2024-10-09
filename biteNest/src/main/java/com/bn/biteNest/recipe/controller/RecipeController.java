@@ -40,19 +40,29 @@ public class RecipeController {
             @RequestPart("tips") List<Map<String, String>> tips,
             @RequestPart("imageFiles") List<MultipartFile> imageFiles) {
         try {
-            MultipartFile mainImage = (imageFiles.isEmpty()) ? null : imageFiles.get(0);
-            List<MultipartFile> stepImages = (imageFiles.size() > 1) ? imageFiles.subList(1, imageFiles.size()) : List.of();
+            log.info("Received formData: {}", formData);
+            log.info("Received ingredients: {}", ingredients);
+            log.info("Received steps: {}", steps);
+            log.info("Received tips: {}", tips);
+            log.info("Received number of image files: {}", imageFiles.size());
 
-            boolean isCreated = recipeService.createRecipeWithDetails(formData, ingredients, steps, tips, mainImage, stepImages);
+            // 임시 응답으로 받은 데이터를 모두 포함하여 응답을 만들어 봅니다.
+            Map<String, Object> responseData = Map.of(
+                "formData", formData,
+                "ingredients", ingredients,
+                "steps", steps,
+                "tips", tips,
+                "imageFilesCount", imageFiles.size()
+            );
 
-            return isCreated ? responseHandler.createResponse("Recipe created successfully", "success", HttpStatus.OK)
-                             : responseHandler.createResponse("Failed to create recipe", "error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return responseHandler.createResponse("Received recipe data", responseData, HttpStatus.OK);
 
         } catch (Exception e) {
             log.error("Recipe creation failed: ", e);
             return responseHandler.handleException("Recipe creation failed", e);
         }
     }
+
 
     // 2. Recipe Select
     @GetMapping("/{recipeCD}")

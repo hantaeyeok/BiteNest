@@ -3,18 +3,24 @@ import instance from '@util/axios'
 import { isAxiosError } from 'axios'
 
 function RecipeCreatePage() {
-  const handleSubmit = async () => {
+  const handleSubmit = async (formData: FormData) => {
+    // FormData 내용을 출력하기 위해 반복문을 사용합니다.
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value)
+    }
     try {
       const response = await instance.post(
         'http://localhost:80/api/recipes/create',
+        formData,
         {
-          title: 'New Recipe',
-          description: 'This is a new recipe',
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
       )
       console.log(response.data)
     } catch (error: any) {
-      if (error.response) {
+      if (isAxiosError(error) && error.response) {
         // 서버 응답이 있었지만 상태 코드가 2xx 범위를 벗어났을 때
         console.error('서버 응답 오류:', error.response.data)
         console.error('상태 코드:', error.response.status)
