@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bn.biteNest.recipeBookmark.model.dao.RecipeBookmarkMapper">
+
+    <!-- 북마크 추가 -->
+    <insert id="insertBookmark" parameterType="com.bn.biteNest.recipeBookmark.model.vo.BookmarkVO">
+        INSERT INTO RECIPE_BOOKMARK_TB
+        (
+            BOOKMARK_CD, RECIPE_CD, USER_ID, CREATED_DT
+        )
+        VALUES
+        (
+            BOOKMARK_SEQ.NEXTVAL, #{recipeCD}, #{userID}, SYSDATE
+        )
+    </insert>
+
+    <!-- 북마크 삭제 -->
+    <delete id="deleteBookmark" parameterType="map">
+        DELETE FROM RECIPE_BOOKMARK_TB
+        WHERE RECIPE_CD = #{recipeCD} AND USER_ID = #{userID}
+    </delete>
+
+    <!-- 특정 레시피의 북마크 조회 -->
+    <select id="selectBookmarksByRecipe" parameterType="int" resultType="com.bn.biteNest.recipeBookmark.model.vo.BookmarkVO">
+    SELECT 
+        BOOKMARK_CD AS bookmarkCD, 
+        RECIPE_CD AS recipeCD, 
+        USER_ID AS userID, 
+        CREATED_DT AS createdDT
+    FROM RECIPE_BOOKMARK_TB
+    WHERE RECIPE_CD = #{recipeCD}
+    ORDER BY CREATED_DT DESC
+</select>
+
+    <!-- 특정 사용자의 북마크 조회 -->
+    <select id="selectBookmarksByUser" parameterType="string" resultType="com.bn.biteNest.recipeBookmark.model.vo.BookmarkVO">
+        SELECT 
+        BOOKMARK_CD AS bookmarkCD, 
+        RECIPE_CD AS recipeCD, 
+        USER_ID AS userID, 
+        CREATED_DT AS createdDT
+        FROM RECIPE_BOOKMARK_TB
+        WHERE USER_ID = #{userID}
+        ORDER BY CREATED_DT DESC
+    </select>
+
+</mapper>

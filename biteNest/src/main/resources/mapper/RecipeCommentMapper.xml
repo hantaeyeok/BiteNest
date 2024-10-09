@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bn.biteNest.recipeComment.model.dao.RecipeCommentMapper">
+
+    <insert id="insertComment" parameterType="com.bn.biteNest.recipeComment.model.vo.CommentVO">
+        INSERT 
+          INTO 
+            	RECIPE_COMMENT_TB 
+            	(
+                 COMMENT_CD, 
+                 RECIPE_CD, 
+                 USER_NO, 
+                 PARENT_COMMENT_CD, 
+                 COMMENT_TEXT, 
+                 IMAGE_URL, 
+                 CREATED_DT
+            	 )
+        VALUES 
+            	(
+                 COMMENT_SEQ.NEXTVAL, 
+                 #{recipeCD}, 
+                 #{userNO}, 
+                 #{parentCommentCD}, 
+                 #{commentText}, 
+                 #{imageURL, jdbcType=VARCHAR}, 
+                 CURRENT_TIMESTAMP
+            	)
+    </insert>
+
+    <select id="selectCommentsByRecipe" parameterType="int" resultType="com.bn.biteNest.recipeComment.model.vo.CommentVO">
+        SELECT 
+	            COMMENT_CD AS commentCD, 
+	            RECIPE_CD AS recipeCD, 
+	            USER_NO AS userNO, 
+	            PARENT_COMMENT_CD AS parentCommentCD, 
+	            COMMENT_TEXT AS commentText, 
+	            IMAGE_URL AS imageURL, 
+	            CREATED_DT AS createdDT, 
+	            UPDATED_DT AS updatedDT
+          FROM 
+            	RECIPE_COMMENT_TB
+         WHERE 
+            	RECIPE_CD = #{recipeCD}
+         ORDER
+            BY 
+            	PARENT_COMMENT_CD, CREATED_DT
+    </select>
+
+    <select id="selectCommentByCD" parameterType="int" resultType="com.bn.biteNest.recipeComment.model.vo.CommentVO">
+        SELECT 
+	            COMMENT_CD AS commentCD, 
+	            RECIPE_CD AS recipeCD, 
+	            USER_NO AS userNO, 
+	            PARENT_COMMENT_CD AS parentCommentCD, 
+	            COMMENT_TEXT AS commentText, 
+	            IMAGE_URL AS imageURL, 
+	            CREATED_DT AS createdDT, 
+	            UPDATED_DT AS updatedDT
+          FROM 
+           	 	RECIPE_COMMENT_TB
+         WHERE 
+            	COMMENT_CD = #{commentCD}
+    </select>
+
+    <update id="updateComment" parameterType="com.bn.biteNest.recipeComment.model.vo.CommentVO">
+        UPDATE 
+            	RECIPE_COMMENT_TB
+           SET 
+	            COMMENT_TEXT = #{commentText}, 
+	            UPDATED_DT = CURRENT_TIMESTAMP
+         WHERE 
+           		COMMENT_CD = #{commentCD}
+    </update>
+
+    <delete id="deleteComment" parameterType="int">
+        DELETE
+          FROM 
+            	RECIPE_COMMENT_TB
+         WHERE 
+            	COMMENT_CD = #{commentCD}
+    </delete>
+    
+    <select id="countChildComments" resultType="int">
+    	SELECT
+    			COUNT(*)
+ 		  FROM
+ 		  		RECIPE_COMMENT_TB
+		 WHERE
+				PARENT_COMMENT_CD = #{parentCommentCD}      
+    </select>
+
+    <!-- 6. 부모 댓글의 자식 댓글 조회 (Select) -->
+    <select id="selectChildComments" parameterType="int" resultType="com.bn.biteNest.recipeComment.model.vo.CommentVO">
+        SELECT 
+	            COMMENT_CD AS commentCD, 
+	            RECIPE_CD AS recipeCD, 
+	            USER_NO AS userNO, 
+	            PARENT_COMMENT_CD AS parentCommentCD, 
+	            COMMENT_TEXT AS commentText, 
+	            IMAGE_URL AS imageURL, 
+	            CREATED_DT AS createdDT, 
+	            UPDATED_DT AS updatedDT
+          FROM 
+            	RECIPE_COMMENT_TB
+         WHERE 
+           		PARENT_COMMENT_CD = #{parentCommentCD}
+    </select>
+
+    <!-- 7. 부모 댓글의 자식 댓글 삭제 (Delete) -->
+    <delete id="deleteCommentsByChlid" parameterType="int">
+        DELETE 
+          FROM 
+          		RECIPE_COMMENT_TB
+         WHERE 
+         		PARENT_COMMENT_CD = #{parentCommentCD}
+    </delete>
+
+    <!-- 8. 댓글 좋아요 추가 (Insert) -->
+    <insert id="insertCommentLike" parameterType="com.bn.biteNest.recipeComment.model.vo.CommentLikeVO">
+        INSERT 
+          INTO 
+          		COMMENT_LIKE_TB 
+            	(
+                 LIKE_CD, 
+                 COMMENT_CD, 
+                 USER_NO, 
+                 LIKED_DT
+            	)
+        VALUES 
+            	(
+                 COMMENT_LIKE_SEQ.NEXTVAL, 
+                 #{commentCD}, 
+                 #{userNO}, 
+                 CURRENT_TIMESTAMP
+            	)
+    </insert>
+
+    <!-- 9. 댓글 좋아요 삭제 (Delete) -->
+    <delete id="deleteCommentLike" parameterType="map">
+        DELETE
+          FROM 
+         		COMMENT_LIKE_TB
+         WHERE 
+           		COMMENT_CD = #{commentCD} 
+           AND 
+           		USER_NO = #{userNO}
+    </delete>
+
+    <!-- 10. 특정 댓글의 좋아요 수 조회 (Select) -->
+    <select id="countCommentLikes" parameterType="int" resultType="int">
+        SELECT 
+            COUNT(*) 
+        FROM 
+            COMMENT_LIKE_TB 
+        WHERE 
+            COMMENT_CD = #{commentCD}
+    </select>
+
+    <!-- 11. 특정 사용자가 댓글에 좋아요를 눌렀는지 조회 (Select) -->
+    <select id="selectCommentLikeByUser" parameterType="map" resultType="com.bn.biteNest.recipeComment.model.vo.CommentLikeVO">
+        SELECT 
+	            LIKE_CD AS likeCD, 
+	            COMMENT_CD AS commentCD, 
+	            USER_NO AS userNO, 
+	            LIKED_DT AS likedDT
+          FROM 
+            	COMMENT_LIKE_TB
+          WHERE 
+	            COMMENT_CD = #{commentCD} 
+	            AND USER_NO = #{userNO}
+    </select>
+
+</mapper>
