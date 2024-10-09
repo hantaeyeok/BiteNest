@@ -21,12 +21,9 @@ function FridgePage() {
   useEffect(() => {
     if (user && user.id) {
       instance
-        .get(
-          'https://3ccfb3c6-7a46-4902-b117-a23e940861d2.mock.pstmn.io/api/fridge-ingredients',
-          {
-            params: { userId: user.id },
-          },
-        )
+        .get('/api/fridge-ingredients', {
+          params: { userId: user.id },
+        })
         .then((response) => {
           setIngredients(response.data)
           setLoading(false)

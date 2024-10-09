@@ -17,8 +17,8 @@ function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
     time: 0,
     category: '',
     ingredients: [{ name: '', quantity: '' }],
-    subIngredients: null,
-    sauce: null,
+    subIngredients: [],
+    sauce: [],
     steps: [{ stepOrder: 0, description: '', image: null }],
     tips: [], // 빈 배열로 팁 초기화
   })
@@ -49,76 +49,31 @@ function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
     setTitleImagePreview(null) // 미리보기 이미지 삭제
   }
 
-  const handleAddIngredient = () => {
+  const handleAddItem = (field: keyof FormValues) => {
     setFormValues((prev) => ({
       ...prev,
-      ingredients: [...prev.ingredients, { name: '', quantity: '' }],
+      [field]: [...(prev[field] as any[]), { name: '', quantity: '' }],
     }))
   }
 
-  const handleRemoveIngredient = (index: number) => {
-    const newIngredients = formValues.ingredients.filter((_, i) => i !== index)
-    setFormValues({ ...formValues, ingredients: newIngredients })
-  }
-
-  const handleIngredientChange = (
-    index: number,
-    field: 'name' | 'quantity',
-    value: string,
-  ) => {
-    const newIngredients = [...formValues.ingredients]
-    newIngredients[index][field] = value
-    setFormValues((prev) => ({ ...prev, ingredients: newIngredients }))
-  }
-
-  const handleAddSubIngredient = () => {
+  const handleRemoveItem = (field: keyof FormValues, index: number) => {
     setFormValues((prev) => ({
       ...prev,
-      subIngredients: prev.subIngredients
-        ? [...prev.subIngredients, { name: '', quantity: '' }]
-        : [{ name: '', quantity: '' }],
+      [field]: (prev[field] as any[]).filter((_, i: number) => i !== index),
     }))
   }
 
-  const handleRemoveSubIngredient = (index: number) => {
-    const newSubIngredients = (formValues.subIngredients || []).filter(
-      (_, i) => i !== index,
-    )
-    setFormValues({ ...formValues, subIngredients: newSubIngredients })
-  }
-
-  const handleSubIngredientChange = (
+  const handleItemChange = (
+    field: keyof FormValues,
     index: number,
-    field: 'name' | 'quantity',
+    subField: string,
     value: string,
   ) => {
-    const newSubIngredients = [...(formValues.subIngredients || [])]
-    newSubIngredients[index][field] = value
-    setFormValues((prev) => ({ ...prev, subIngredients: newSubIngredients }))
-  }
-
-  const handleAddSauce = () => {
-    setFormValues((prev) => ({
-      ...prev,
-      sauce: prev.sauce
-        ? [...prev.sauce, { name: '', quantity: '' }]
-        : [{ name: '', quantity: '' }],
-    }))
-  }
-
-  const handleRemoveSauce = (index: number) => {
-    const newSauce = (formValues.sauce || []).filter((_, i) => i !== index)
-    setFormValues({ ...formValues, sauce: newSauce })
-  }
-
-  const handleSauceChange = (
-    index: number,
-    field: 'name' | 'quantity',
-    value: string,
-  ) => {
-    const newSauce = [...(formValues.sauce || [])]
-    newSauce[index][field] = value
-    setFormValues((prev) => ({ ...prev, sauce: newSauce }))
+    setFormValues((prev) => {
+      const updatedItems = [...(prev[field] as any[])]
+      updatedItems[index][subField] = value
+      return { ...prev, [field]: updatedItems }
+    })
   }
 
   const handleAddStep = () => {
@@ -133,35 +88,41 @@ function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
   }
 
   const handleRemoveStep = (index: number) => {
-    const newSteps = formValues.steps.filter((_, i) => i !== index)
-    const newPreviews = imagePreviews.filter((_, i) => i !== index)
     setFormValues((prev) => ({
       ...prev,
-      steps: newSteps,
+      steps: prev.steps.filter((_, i) => i !== index),
     }))
-    setImagePreviews(newPreviews)
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index))
   }
 
   const handleStepChange = (index: number, value: string) => {
-    const newSteps = [...formValues.steps]
-    newSteps[index].description = value
-    setFormValues((prev) => ({ ...prev, steps: newSteps }))
+    setFormValues((prev) => {
+      const newSteps = [...prev.steps]
+      newSteps[index].description = value
+      return { ...prev, steps: newSteps }
+    })
   }
 
   const handleImageChange = (index: number, value: File | null) => {
-    const newSteps = [...formValues.steps]
-    newSteps[index].image = value
-    setFormValues((prev) => ({ ...prev, steps: newSteps }))
+    setFormValues((prev) => {
+      const newSteps = [...prev.steps]
+      newSteps[index].image = value
+      return { ...prev, steps: newSteps }
+    })
 
     if (value) {
       const previewUrl = URL.createObjectURL(value)
-      const newPreviews = [...imagePreviews]
-      newPreviews[index] = previewUrl
-      setImagePreviews(newPreviews)
+      setImagePreviews((prev) => {
+        const newPreviews = [...prev]
+        newPreviews[index] = previewUrl
+        return newPreviews
+      })
     } else {
-      const newPreviews = [...imagePreviews]
-      newPreviews[index] = ''
-      setImagePreviews(newPreviews)
+      setImagePreviews((prev) => {
+        const newPreviews = [...prev]
+        newPreviews[index] = ''
+        return newPreviews
+      })
     }
   }
 
@@ -205,67 +166,54 @@ function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
   const handleSubmit = () => {
     const formData = new FormData()
 
-    formData.append('title', formValues.title)
-    formData.append('description', formValues.description)
-    formData.append('time', String(formValues.time))
-    formData.append('category', formValues.category)
+    formData.append('formData[title]', formValues.title)
+    formData.append('formData[description]', formValues.description)
+    formData.append('formData[time]', String(formValues.time))
+    formData.append('formData[category]', formValues.category)
 
     if (formValues.titleImage) {
-      formData.append('titleImage', formValues.titleImage) // 이미지 파일 추가
+      formData.append('imageFiles', formValues.titleImage)
     }
 
-    // ingredients 배열 추가
     formValues.ingredients.forEach((ingredient, index) => {
-      formData.append(`ingredients[${index}].ingredientName`, ingredient.name)
+      formData.append(`ingredients[${index}][name]`, ingredient.name || '')
       formData.append(
-        `ingredients[${index}].ingredientAmount`,
-        ingredient.quantity,
+        `ingredients[${index}][quantity]`,
+        ingredient.quantity || '',
       )
-      formData.append(`ingredients[${index}].ingredientType`, '주재료')
     })
 
-    // subIngredients가 있을 경우 추가
     if (formValues.subIngredients) {
       formValues.subIngredients.forEach((subIngredient, index) => {
         formData.append(
-          `ingredients[${index + formValues.ingredients.length}].ingredientName`,
+          `ingredients[${index + formValues.ingredients.length}][name]`,
           subIngredient.name || '',
         )
         formData.append(
-          `ingredients[${index + formValues.ingredients.length}].ingredientAmount`,
+          `ingredients[${index + formValues.ingredients.length}][quantity]`,
           subIngredient.quantity || '',
-        )
-        formData.append(
-          `ingredients[${index + formValues.ingredients.length}].ingredientType`,
-          '부재료',
         )
       })
     }
 
-    // sauce가 있을 경우 추가
     if (formValues.sauce) {
       formValues.sauce.forEach((sauceItem, index) => {
         const baseIndex =
           index +
           formValues.ingredients.length +
           (formValues.subIngredients?.length || 0)
+        formData.append(`ingredients[${baseIndex}][name]`, sauceItem.name || '')
         formData.append(
-          `ingredients[${baseIndex}].ingredientName`,
-          sauceItem.name || '',
-        )
-        formData.append(
-          `ingredients[${baseIndex}].ingredientAmount`,
+          `ingredients[${baseIndex}][quantity]`,
           sauceItem.quantity || '',
         )
-        formData.append(`ingredients[${baseIndex}].ingredientType`, '양념')
       })
     }
 
-    // steps 배열에서 파일 처리
     formValues.steps.forEach((step, index) => {
-      formData.append(`steps[${index}].description`, step.description)
+      formData.append(`steps[${index}][description]`, step.description)
       if (step.image) {
-        formData.append(`steps[${index}].image`, step.image)
+        formData.append('imageFiles', step.image)
       }
     })
 
@@ -301,10 +249,9 @@ function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
             <img
               src={titleImagePreview}
               alt="미리보기"
-              className="h-full w-full object-contain cursor-pointer" // object-fit: contain 적용
+              className="h-full w-full object-contain cursor-pointer"
               onClick={() => document.getElementById('fileInput')?.click()}
             />
-            {/* 이미지 삭제 버튼 */}
             <button
               className="absolute top-2 right-2 bg-brown-300 text-white px-2 py-1 rounded z-10"
               onClick={handleRemoveImage}
@@ -319,13 +266,12 @@ function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
         )}
       </div>
 
-      {/* 파일 업로드 input */}
       <input
         id="fileInput"
         type="file"
         className="hidden"
         accept="image/*"
-        onChange={handleImageUpload} // 파일 선택 시 handleImageUpload 함수 실행
+        onChange={handleImageUpload}
       />
 
       <input
@@ -369,23 +315,33 @@ function Form({ onSubmit }: { onSubmit: (formData: FormData) => void }) {
 
       <IngredientsSection
         ingredients={formValues.ingredients}
-        handleAddIngredient={handleAddIngredient}
-        handleIngredientChange={handleIngredientChange}
-        handleRemoveIngredient={handleRemoveIngredient}
+        handleAddIngredient={() => handleAddItem('ingredients')}
+        handleIngredientChange={(index, field, value) =>
+          handleItemChange('ingredients', index, field, value)
+        }
+        handleRemoveIngredient={(index) =>
+          handleRemoveItem('ingredients', index)
+        }
       />
 
       <SubIngredientsSection
         subIngredients={formValues.subIngredients}
-        handleAddSubIngredient={handleAddSubIngredient}
-        handleSubIngredientChange={handleSubIngredientChange}
-        handleRemoveSubIngredient={handleRemoveSubIngredient}
+        handleAddSubIngredient={() => handleAddItem('subIngredients')}
+        handleSubIngredientChange={(index, field, value) =>
+          handleItemChange('subIngredients', index, field, value)
+        }
+        handleRemoveSubIngredient={(index) =>
+          handleRemoveItem('subIngredients', index)
+        }
       />
 
       <SauceSection
         sauce={formValues.sauce}
-        handleAddSauce={handleAddSauce}
-        handleSauceChange={handleSauceChange}
-        handleRemoveSauce={handleRemoveSauce}
+        handleAddSauce={() => handleAddItem('sauce')}
+        handleSauceChange={(index, field, value) =>
+          handleItemChange('sauce', index, field, value)
+        }
+        handleRemoveSauce={(index) => handleRemoveItem('sauce', index)}
       />
 
       <StepsSection
@@ -414,9 +370,9 @@ function IconLeft() {
       fill="none"
       height="24"
       stroke="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
       viewBox="0 0 24 24"
       width="24"
       xmlns="http://www.w3.org/2000/svg"
