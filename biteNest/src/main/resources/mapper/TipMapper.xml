@@ -15,7 +15,7 @@
           		 TIP_CONTENT, 
           		 TIP_ORD
           		 )
-        VALUES 
+        VALUES  
          		(
          		 TIP_SEQ.NEXTVAL,
          		 #{recipeCD}, 
