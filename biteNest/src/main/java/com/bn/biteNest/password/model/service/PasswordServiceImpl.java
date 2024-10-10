@@ -47,7 +47,7 @@ public class PasswordServiceImpl implements PasswordService {
 	}
 	
 
-	// 비밀번호 검증
+	// 비밀번호 검증(로그인)
 	@Override
 	public boolean checkPassword(Password password, String rawPassword) {
 		
