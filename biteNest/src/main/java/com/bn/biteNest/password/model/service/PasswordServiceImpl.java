@@ -19,7 +19,7 @@ public class PasswordServiceImpl implements PasswordService {
 	
 	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 	
-	// 비밀번호 생성
+	// 비밀번호 암호화(회원가입)
 	@Override
 	public Password savePassword(Password password) {
 		
@@ -45,12 +45,13 @@ public class PasswordServiceImpl implements PasswordService {
 		
 		return passwordRepository.save(password);
 	}
+	
 
 	// 비밀번호 검증
 	@Override
 	public boolean checkPassword(Password password, String rawPassword) {
 		
-		return passwordEncoder.matches(rawPassword, password.getPassword());
+		return passwordEncoder.matches(password.getPassword(), rawPassword);
 	}
 
 }
